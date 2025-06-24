@@ -317,7 +317,7 @@ export default function HeroSection(): JSX.Element {
     <>
       <div
         ref={heroRef}
-        className="bg-[#F5F4F5] min-h-screen pt-24 md:pt-32 pb-8 md:pb-16 overflow-hidden"
+        className="bg-[#F5F4F5] min-h-screen pt-54 md:pt-32 pb-8 md:pb-16 overflow-hidden"
       >
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">

@@ -9,19 +9,21 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-interface Testimonial {
+import { appwriteConfig, getImageUrl } from "@/utils/appwrite"; // Adjust path as needed
+
+interface Story {
   $id: string;
   name: string;
   program: string;
   university: string;
   content: string;
   rating: number;
-  imageUrl?: string;
+  imageId?: string;
   status: string;
 }
 
 export default function StudentSuccessCarousel() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,24 +37,69 @@ export default function StudentSuccessCarousel() {
   });
 
   useEffect(() => {
-    fetchTestimonials();
+    fetchStories();
   }, []);
 
-  const fetchTestimonials = async () => {
+  const fetchStories = async () => {
     try {
-      const response = await fetch("/api/testimonials?status=approved");
-      if (response.ok) {
-        const data = await response.json();
-        setTestimonials(data.documents || []);
+      setLoading(true);
+
+      const response = await fetch(
+        `/api/stories?status=approved&t=${Date.now()}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          cache: "no-store",
+        }
+      );
+
+      if (!response.ok) {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        console.error("API Error Details:", {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData,
+        });
+
+        throw new Error(
+          errorData.error || `Request failed with status ${response.status}`
+        );
       }
+
+      const data = await response.json();
+
+      if (!Array.isArray(data?.documents)) {
+        console.warn("Unexpected API response structure:", data);
+        setStories([]);
+        return;
+      }
+
+      setStories(data.documents);
     } catch (error) {
-      console.error("Failed to fetch testimonials:", error);
+      console.error("Fetch Stories Error:", {
+        error,
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
+
+      setStories([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -69,17 +116,17 @@ export default function StudentSuccessCarousel() {
 
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('program', formData.program);
-      formDataToSend.append('university', formData.university);
-      formDataToSend.append('content', formData.content);
-      formDataToSend.append('rating', formData.rating.toString());
-      
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("program", formData.program);
+      formDataToSend.append("university", formData.university);
+      formDataToSend.append("content", formData.content);
+      formDataToSend.append("rating", formData.rating.toString());
+
       if (formData.file) {
-        formDataToSend.append('file', formData.file);
+        formDataToSend.append("file", formData.file);
       }
 
-      const response = await fetch("/api/testimonials", {
+      const response = await fetch("/api/stories", {
         method: "POST",
         body: formDataToSend,
       });
@@ -94,12 +141,13 @@ export default function StudentSuccessCarousel() {
           rating: 5,
           file: null,
         });
-        alert("Thank you! Your testimonial has been submitted for review.");
+        alert("Thank you! Your story has been submitted for review.");
+        fetchStories();
       } else {
-        throw new Error("Failed to submit testimonial");
+        throw new Error("Failed to submit story");
       }
     } catch (error) {
-      alert("Failed to submit testimonial. Please try again.");
+      alert("Failed to submit story. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -118,6 +166,13 @@ export default function StudentSuccessCarousel() {
     );
   }
 
+  const STORIES_BUCKET = appwriteConfig.buckets.stories;
+
+  const getStoryImageUrl = (imageId?: string) => {
+    if (!imageId) return null;
+    return getImageUrl(imageId, STORIES_BUCKET, 200, 200);
+  };
+
   return (
     <div className="bg-[#F5F4F5] py-16 px-4">
       <div className="container mx-auto">
@@ -133,7 +188,8 @@ export default function StudentSuccessCarousel() {
             Student Success Stories
           </h2>
           <p className="text-[#2C3C81]/80 text-lg max-w-3xl mx-auto">
-            Hear from our students who achieved their international education dreams
+            Hear from our students who achieved their international education
+            dreams
           </p>
         </motion.div>
 
@@ -157,7 +213,7 @@ export default function StudentSuccessCarousel() {
             pagination={{ clickable: true }}
             className="!pb-12"
           >
-            {testimonials.map((story, index) => (
+            {stories.map((story, index) => (
               <SwiperSlide key={story.$id}>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -169,11 +225,15 @@ export default function StudentSuccessCarousel() {
                 >
                   <div className="flex items-center mb-4">
                     <div className="w-16 h-16 rounded-full overflow-hidden mr-4 bg-gray-200 flex items-center justify-center">
-                      {story.imageUrl ? (
+                      {story.imageId ? (
                         <img
-                          src={story.imageUrl}
+                          src={getStoryImageUrl(story.imageId) || ""}
                           alt={story.name}
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src =
+                              "/placeholder.jpg";
+                          }}
                         />
                       ) : (
                         <User className="w-8 h-8 text-gray-400" />
@@ -181,33 +241,33 @@ export default function StudentSuccessCarousel() {
                     </div>
                     <div>
                       <h3 className="font-bold text-[#2C3C81]">{story.name}</h3>
-                      <p className="text-sm text-[#2C3C81]/80">{story.program}</p>
-                      <p className="text-xs text-[#2C3C81]/60">{story.university}</p>
+                      <p className="text-sm text-[#2C3C81]/80">
+                        {story.program}
+                      </p>
+                      <p className="text-xs text-[#2C3C81]/60">
+                        {story.university}
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div className="mb-4 flex">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
                         className={`w-5 h-5 ${
-                          i < story.rating ? "text-[#C73D43] fill-current" : "text-gray-300"
+                          i < story.rating
+                            ? "text-[#C73D43] fill-current"
+                            : "text-gray-300"
                         }`}
                       />
                     ))}
                   </div>
-                  
+
                   <p className="text-[#2C3C81]/90 mb-6 flex-grow line-clamp-4">
                     "{story.content}"
                   </p>
-                  
-                  <motion.button
-                    whileHover={{ x: 5 }}
-                    className="group flex items-center text-[#C73D43] hover:text-[#2C3C81] transition-colors mt-auto"
-                  >
-                    <span>Read full story</span>
-                    <ArrowRight className="ml-2 w-4 h-4 transition-transform" />
-                  </motion.button>
+
+                  {/* Removed Read full story button */}
                 </motion.div>
               </SwiperSlide>
             ))}
@@ -228,7 +288,7 @@ export default function StudentSuccessCarousel() {
             onClick={() => setIsPopupOpen(true)}
             className="group inline-flex items-center bg-[#C73D43] text-[#F5F4F5] px-8 py-3 rounded-lg font-semibold hover:bg-[#2C3C81] transition-colors"
           >
-            Add Your Story Too
+            Share Your Story
             <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </motion.button>
         </motion.div>
@@ -260,7 +320,9 @@ export default function StudentSuccessCarousel() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-[#2C3C81] mb-2 font-medium">Your Name</label>
+                  <label className="block text-[#2C3C81] mb-2 font-medium">
+                    Your Name
+                  </label>
                   <input
                     type="text"
                     name="name"
@@ -272,7 +334,9 @@ export default function StudentSuccessCarousel() {
                 </div>
 
                 <div>
-                  <label className="block text-[#2C3C81] mb-2 font-medium">Program</label>
+                  <label className="block text-[#2C3C81] mb-2 font-medium">
+                    Program
+                  </label>
                   <input
                     type="text"
                     name="program"
@@ -285,7 +349,9 @@ export default function StudentSuccessCarousel() {
                 </div>
 
                 <div>
-                  <label className="block text-[#2C3C81] mb-2 font-medium">University</label>
+                  <label className="block text-[#2C3C81] mb-2 font-medium">
+                    University
+                  </label>
                   <input
                     type="text"
                     name="university"
@@ -298,7 +364,9 @@ export default function StudentSuccessCarousel() {
                 </div>
 
                 <div>
-                  <label className="block text-[#2C3C81] mb-2 font-medium">Your Photo (Optional)</label>
+                  <label className="block text-[#2C3C81] mb-2 font-medium">
+                    Your Photo (Optional)
+                  </label>
                   <input
                     type="file"
                     accept="image/*"
@@ -308,7 +376,9 @@ export default function StudentSuccessCarousel() {
                 </div>
 
                 <div>
-                  <label className="block text-[#2C3C81] mb-2 font-medium">Your Story</label>
+                  <label className="block text-[#2C3C81] mb-2 font-medium">
+                    Your Story
+                  </label>
                   <textarea
                     name="content"
                     value={formData.content}
@@ -321,7 +391,9 @@ export default function StudentSuccessCarousel() {
                 </div>
 
                 <div>
-                  <label className="block text-[#2C3C81] mb-2 font-medium">Rating</label>
+                  <label className="block text-[#2C3C81] mb-2 font-medium">
+                    Rating
+                  </label>
                   <select
                     name="rating"
                     value={formData.rating}

@@ -1,7 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award, Users, Globe, BookOpen, Target, Heart, Star, CheckCircle } from "lucide-react";
+import {
+  Award,
+  Users,
+  Globe,
+  BookOpen,
+  Target,
+  Heart,
+  Star,
+  CheckCircle,
+} from "lucide-react";
 
 export default function AboutPage() {
   const stats = [
@@ -15,46 +24,78 @@ export default function AboutPage() {
     {
       icon: Target,
       title: "Excellence",
-      description: "We strive for excellence in everything we do, ensuring the highest quality of service for our students."
+      description:
+        "We strive for excellence in everything we do, ensuring the highest quality of service for our students.",
     },
     {
       icon: Heart,
       title: "Care",
-      description: "We genuinely care about each student's success and provide personalized support throughout their journey."
+      description:
+        "We genuinely care about each student's success and provide personalized support throughout their journey.",
     },
     {
       icon: Globe,
       title: "Global Vision",
-      description: "We help students think globally and prepare them for success in an interconnected world."
+      description:
+        "We help students think globally and prepare them for success in an interconnected world.",
     },
   ];
 
   const milestones = [
-    { year: "2010", title: "Foundation", description: "Gurukul Education Foundation was established with a vision to make international education accessible." },
-    { year: "2015", title: "Expansion", description: "Expanded services to include test preparation and visa assistance." },
-    { year: "2018", title: "Recognition", description: "Received recognition as Nepal's leading education consultancy." },
-    { year: "2020", title: "Digital Transformation", description: "Launched online services and virtual consultations." },
-    { year: "2023", title: "Global Partnerships", description: "Established partnerships with 500+ universities worldwide." },
+    {
+      year: "2010",
+      title: "Foundation",
+      description:
+        "Gurukul Education Foundation was established with a vision to make international education accessible.",
+    },
+    {
+      year: "2015",
+      title: "Expansion",
+      description:
+        "Expanded services to include test preparation and visa assistance.",
+    },
+    {
+      year: "2018",
+      title: "Recognition",
+      description:
+        "Received recognition as Nepal's leading education consultancy.",
+    },
+    {
+      year: "2020",
+      title: "Digital Transformation",
+      description: "Launched online services and virtual consultations.",
+    },
+    {
+      year: "2023",
+      title: "Global Partnerships",
+      description: "Established partnerships with 500+ universities worldwide.",
+    },
   ];
 
   const team = [
     {
       name: "Dr. Rajesh Sharma",
       position: "Founder & CEO",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
-      description: "With over 15 years of experience in international education, Dr. Sharma has guided thousands of students to achieve their dreams."
+      image:
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
+      description:
+        "With over 15 years of experience in international education, Dr. Sharma has guided thousands of students to achieve their dreams.",
     },
     {
       name: "Ms. Priya Patel",
       position: "Director of Operations",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=300&fit=crop&crop=face",
-      description: "Priya oversees all operational aspects and ensures seamless service delivery to our students."
+      image:
+        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=300&fit=crop&crop=face",
+      description:
+        "Priya oversees all operational aspects and ensures seamless service delivery to our students.",
     },
     {
       name: "Mr. Arjun Singh",
       position: "Head of Counseling",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
-      description: "Arjun leads our counseling team and specializes in university selection and application strategies."
+      image:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
+      description:
+        "Arjun leads our counseling team and specializes in university selection and application strategies.",
     },
   ];
 
@@ -72,8 +113,8 @@ export default function AboutPage() {
             About Gurukul Education Foundation
           </h1>
           <p className="text-xl text-[#2C3C81]/80 max-w-3xl mx-auto">
-            Transforming dreams into reality through expert guidance and unwavering support 
-            in international education since 2010.
+            Transforming dreams into reality through expert guidance and
+            unwavering support in international education since 2010.
           </p>
         </div>
       </motion.section>
@@ -126,22 +167,24 @@ export default function AboutPage() {
               </h2>
               <div className="space-y-6 text-[#2C3C81]/80">
                 <p className="text-lg">
-                  Founded in 2010, Gurukul Education Foundation began with a simple 
-                  mission: to make international education accessible to every deserving 
-                  student. What started as a small consultancy has grown into Nepal's 
-                  most trusted education partner.
+                  Founded in 2010, Gurukul Education Foundation began with a
+                  simple mission: to make international education accessible to
+                  every deserving student. What started as a small consultancy
+                  has grown into Nepal's most trusted education partner.
                 </p>
                 <p>
-                  Our founders, having experienced the challenges of studying abroad 
-                  firsthand, understood the need for comprehensive support that goes 
-                  beyond just application assistance. Today, we provide end-to-end 
-                  services that ensure our students not only get admitted to their 
-                  dream universities but also thrive in their new academic environment.
+                  Our founders, having experienced the challenges of studying
+                  abroad firsthand, understood the need for comprehensive
+                  support that goes beyond just application assistance. Today,
+                  we provide end-to-end services that ensure our students not
+                  only get admitted to their dream universities but also thrive
+                  in their new academic environment.
                 </p>
                 <p>
-                  With partnerships across 15+ countries and relationships with over 
-                  500 universities worldwide, we continue to expand opportunities for 
-                  our students while maintaining the personalized touch that sets us apart.
+                  With partnerships across 15+ countries and relationships with
+                  over 500 universities worldwide, we continue to expand
+                  opportunities for our students while maintaining the
+                  personalized touch that sets us apart.
                 </p>
               </div>
             </div>
@@ -152,7 +195,7 @@ export default function AboutPage() {
             >
               <div className="relative h-96 rounded-xl overflow-hidden shadow-lg">
                 <img
-                  src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop"
+                  src="/why-us-3.jpeg"
                   alt="Students studying"
                   className="w-full h-full object-cover"
                 />
@@ -185,13 +228,25 @@ export default function AboutPage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
+                  className={`flex items-center ${
+                    index % 2 === 0 ? "flex-row" : "flex-row-reverse"
+                  }`}
                 >
-                  <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8'}`}>
+                  <div
+                    className={`w-1/2 ${
+                      index % 2 === 0 ? "pr-8 text-right" : "pl-8"
+                    }`}
+                  >
                     <div className="bg-[#F5F4F5] rounded-xl p-6 shadow-lg">
-                      <div className="text-2xl font-bold text-[#C73D43] mb-2">{milestone.year}</div>
-                      <h3 className="text-xl font-bold text-[#2C3C81] mb-2">{milestone.title}</h3>
-                      <p className="text-[#2C3C81]/80">{milestone.description}</p>
+                      <div className="text-2xl font-bold text-[#C73D43] mb-2">
+                        {milestone.year}
+                      </div>
+                      <h3 className="text-xl font-bold text-[#2C3C81] mb-2">
+                        {milestone.title}
+                      </h3>
+                      <p className="text-[#2C3C81]/80">
+                        {milestone.description}
+                      </p>
                     </div>
                   </div>
                   <div className="relative z-10">
@@ -234,9 +289,7 @@ export default function AboutPage() {
                 <h3 className="text-xl font-bold text-[#2C3C81] mb-4">
                   {value.title}
                 </h3>
-                <p className="text-[#2C3C81]/80">
-                  {value.description}
-                </p>
+                <p className="text-[#2C3C81]/80">{value.description}</p>
               </motion.div>
             ))}
           </div>
@@ -279,9 +332,7 @@ export default function AboutPage() {
                 <p className="text-[#C73D43] font-semibold mb-4">
                   {member.position}
                 </p>
-                <p className="text-[#2C3C81]/80">
-                  {member.description}
-                </p>
+                <p className="text-[#2C3C81]/80">{member.description}</p>
               </motion.div>
             ))}
           </div>
@@ -309,7 +360,7 @@ export default function AboutPage() {
               "High visa success rate (98%)",
               "Post-arrival support and assistance",
               "Scholarship guidance and application support",
-              "Regular workshops and seminars"
+              "Regular workshops and seminars",
             ].map((feature, index) => (
               <motion.div
                 key={index}
@@ -340,7 +391,8 @@ export default function AboutPage() {
             Ready to Start Your Journey?
           </h2>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join thousands of successful students who have achieved their international education dreams with our guidance.
+            Join thousands of successful students who have achieved their
+            international education dreams with our guidance.
           </p>
           <motion.button
             whileHover={{ scale: 1.05 }}

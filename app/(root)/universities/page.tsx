@@ -1,8 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, MapPin, Calendar, BookOpen, Star, ArrowRight, Filter } from "lucide-react";
+import {
+  Search,
+  MapPin,
+  Calendar,
+  BookOpen,
+  Star,
+  ArrowRight,
+  Filter,
+} from "lucide-react";
 import { motion } from "framer-motion";
+
+// Import centralized appwrite config and function
+import {
+  appwriteConfig,
+  getImageUrl as getAppwriteImageUrl,
+} from "@/utils/appwrite";
 
 interface University {
   $id: string;
@@ -17,13 +31,24 @@ interface University {
 
 export default function UniversitiesPage() {
   const [universities, setUniversities] = useState<University[]>([]);
-  const [filteredUniversities, setFilteredUniversities] = useState<University[]>([]);
+  const [filteredUniversities, setFilteredUniversities] = useState<
+    University[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("all");
-  const [selectedUniversity, setSelectedUniversity] = useState<University | null>(null);
+  const [selectedUniversity, setSelectedUniversity] =
+    useState<University | null>(null);
 
-  const countries = ["all", "South Korea", "Australia", "Japan", "UK", "Malta"];
+  const countries = [
+    "all",
+    "South Korea",
+    "United States",
+    "Australia",
+    "Japan",
+    "UK",
+    "Malta",
+  ];
 
   useEffect(() => {
     fetchUniversities();
@@ -52,24 +77,34 @@ export default function UniversitiesPage() {
     let filtered = universities;
 
     if (searchTerm) {
-      filtered = filtered.filter(uni =>
-        uni.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        uni.country.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (uni) =>
+          uni.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          uni.country.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     if (selectedCountry !== "all") {
-      filtered = filtered.filter(uni =>
-        uni.country.toLowerCase() === selectedCountry.toLowerCase()
+      filtered = filtered.filter(
+        (uni) => uni.country.toLowerCase() === selectedCountry.toLowerCase()
       );
     }
 
     setFilteredUniversities(filtered);
   };
 
-  const getImageUrl = (imageId?: string) => {
-    if (!imageId) return `https://picsum.photos/400/300?random=${Math.random()}`;
-    return `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/gallery-media/files/${imageId}/preview?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}&width=400&height=300`;
+  // Use centralized getImageUrl with bucket for universities
+  const getUniversityImageUrl = (imageId?: string) => {
+    if (!imageId) {
+      // fallback to placeholder if no imageId
+      return `https://picsum.photos/400/300?random=${Math.random()}`;
+    }
+    return getAppwriteImageUrl(
+      imageId,
+      appwriteConfig.buckets.universities,
+      400,
+      300
+    );
   };
 
   const containerVariants = {
@@ -77,9 +112,9 @@ export default function UniversitiesPage() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const itemVariants = {
@@ -88,9 +123,9 @@ export default function UniversitiesPage() {
       y: 0,
       opacity: 1,
       transition: {
-        duration: 0.5
-      }
-    }
+        duration: 0.5,
+      },
+    },
   };
 
   if (loading) {
@@ -117,7 +152,8 @@ export default function UniversitiesPage() {
             Discover Top Universities
           </h1>
           <p className="text-lg text-[#2C3C81]/80 max-w-3xl mx-auto">
-            Explore world-class institutions across South Korea, Australia, Japan, UK, and Malta
+            Explore world-class institutions across South Korea, Australia,
+            Japan, UK, and Malta
           </p>
         </motion.div>
 
@@ -130,7 +166,10 @@ export default function UniversitiesPage() {
         >
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#B2ACCE]" size={20} />
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#B2ACCE]"
+                size={20}
+              />
               <input
                 type="text"
                 placeholder="Search universities..."
@@ -140,13 +179,16 @@ export default function UniversitiesPage() {
               />
             </div>
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#B2ACCE]" size={20} />
+              <Filter
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#B2ACCE]"
+                size={20}
+              />
               <select
                 value={selectedCountry}
                 onChange={(e) => setSelectedCountry(e.target.value)}
                 className="pl-10 pr-8 py-3 border border-[#B2ACCE]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C73D43] focus:border-transparent bg-white"
               >
-                {countries.map(country => (
+                {countries.map((country) => (
                   <option key={country} value={country}>
                     {country === "all" ? "All Countries" : country}
                   </option>
@@ -173,7 +215,7 @@ export default function UniversitiesPage() {
             >
               <div className="relative h-48 overflow-hidden">
                 <img
-                  src={getImageUrl(university.imageId)}
+                  src={getUniversityImageUrl(university.imageId)}
                   alt={university.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
@@ -181,12 +223,12 @@ export default function UniversitiesPage() {
                   {university.country}
                 </div>
               </div>
-              
+
               <div className="p-6">
                 <h3 className="text-xl font-bold text-[#2C3C81] mb-2 group-hover:text-[#C73D43] transition-colors">
                   {university.name}
                 </h3>
-                
+
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-[#2C3C81]/70">
                     <MapPin size={16} className="mr-2 text-[#C73D43]" />
@@ -208,7 +250,10 @@ export default function UniversitiesPage() {
 
                 <button className="w-full bg-[#2C3C81] text-white py-2 rounded-lg hover:bg-[#C73D43] transition-colors group flex items-center justify-center">
                   <span>Learn More</span>
-                  <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight
+                    size={16}
+                    className="ml-2 group-hover:translate-x-1 transition-transform"
+                  />
                 </button>
               </div>
             </motion.div>
@@ -221,7 +266,9 @@ export default function UniversitiesPage() {
             animate={{ opacity: 1 }}
             className="text-center py-12"
           >
-            <div className="text-[#B2ACCE] text-lg">No universities found matching your criteria.</div>
+            <div className="text-[#B2ACCE] text-lg">
+              No universities found matching your criteria.
+            </div>
           </motion.div>
         )}
 
@@ -243,7 +290,7 @@ export default function UniversitiesPage() {
             >
               <div className="relative h-64">
                 <img
-                  src={getImageUrl(selectedUniversity.imageId)}
+                  src={getUniversityImageUrl(selectedUniversity.imageId)}
                   alt={selectedUniversity.name}
                   className="w-full h-full object-cover"
                 />
@@ -254,43 +301,57 @@ export default function UniversitiesPage() {
                   ×
                 </button>
               </div>
-              
+
               <div className="p-6">
                 <h2 className="text-2xl font-bold text-[#2C3C81] mb-4">
                   {selectedUniversity.name}
                 </h2>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   <div className="space-y-3">
                     <div className="flex items-center">
                       <MapPin size={18} className="mr-3 text-[#C73D43]" />
                       <div>
-                        <div className="font-medium text-[#2C3C81]">Location</div>
-                        <div className="text-[#2C3C81]/70">{selectedUniversity.country}</div>
+                        <div className="font-medium text-[#2C3C81]">
+                          Location
+                        </div>
+                        <div className="text-[#2C3C81]/70">
+                          {selectedUniversity.country}
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center">
                       <Calendar size={18} className="mr-3 text-[#C73D43]" />
                       <div>
                         <div className="font-medium text-[#2C3C81]">Intake</div>
-                        <div className="text-[#2C3C81]/70">{selectedUniversity.intake}</div>
+                        <div className="text-[#2C3C81]/70">
+                          {selectedUniversity.intake}
+                        </div>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <div className="flex items-center">
                       <BookOpen size={18} className="mr-3 text-[#C73D43]" />
                       <div>
-                        <div className="font-medium text-[#2C3C81]">Programs</div>
-                        <div className="text-[#2C3C81]/70">{selectedUniversity.programs}</div>
+                        <div className="font-medium text-[#2C3C81]">
+                          Programs
+                        </div>
+                        <div className="text-[#2C3C81]/70">
+                          {selectedUniversity.programs}
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center">
                       <Star size={18} className="mr-3 text-[#C73D43]" />
                       <div>
-                        <div className="font-medium text-[#2C3C81]">Ranking</div>
-                        <div className="text-[#2C3C81]/70">{selectedUniversity.ranking}</div>
+                        <div className="font-medium text-[#2C3C81]">
+                          Ranking
+                        </div>
+                        <div className="text-[#2C3C81]/70">
+                          {selectedUniversity.ranking}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -299,7 +360,9 @@ export default function UniversitiesPage() {
                 {selectedUniversity.description && (
                   <div className="mb-6">
                     <h3 className="font-medium text-[#2C3C81] mb-2">About</h3>
-                    <p className="text-[#2C3C81]/70">{selectedUniversity.description}</p>
+                    <p className="text-[#2C3C81]/70">
+                      {selectedUniversity.description}
+                    </p>
                   </div>
                 )}
 

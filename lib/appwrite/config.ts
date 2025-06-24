@@ -7,7 +7,7 @@ export const appwriteConfig = {
     gallery: process.env.NEXT_PUBLIC_APPWRITE_GALLERY_BUCKET!,
     news: process.env.NEXT_PUBLIC_APPWRITE_NEWS_BUCKET!,
     universities: process.env.NEXT_PUBLIC_APPWRITE_UNIVERSITIES_BUCKET!,
-    testimonials: process.env.NEXT_PUBLIC_APPWRITE_TESTIMONIALS_BUCKET!,
+    stories: process.env.NEXT_PUBLIC_APPWRITE_STORIES_BUCKET!,
   },
   collections: {
     stories: '6859905b001b1d6fd179', // This will now handle testimonials

@@ -15,18 +15,18 @@ export default function Navbar() {
   const navbarRef = useRef<HTMLDivElement>(null);
 
   const destinations = [
-    { name: "South Korea", route: "/countries", flag: "🇰🇷" },
-    { name: "Australia", route: "/countries", flag: "🇦🇺" },
-    { name: "Japan", route: "/countries", flag: "🇯🇵" },
-    { name: "UK", route: "/countries", flag: "🇬🇧" },
-    { name: "Malta", route: "/countries", flag: "🇲🇹" },
+    { name: "South Korea", route: "/south-korea", flag: "🇰🇷" },
+    { name: "Australia", route: "/australia", flag: "🇦🇺" },
+    { name: "Japan", route: "/japan", flag: "🇯🇵" },
+    { name: "UK", route: "/uk", flag: "🇬🇧" },
+    { name: "Malta", route: "/malta", flag: "🇲🇹" },
   ];
 
   const testPreparations = [
-    { name: "IELTS Preparation", route: "/test-preparations", icon: "📝" },
-    { name: "PTE Preparation", route: "/test-preparations", icon: "💻" },
-    { name: "Japanese Language", route: "/test-preparations", icon: "🇯🇵" },
-    { name: "Korean Language", route: "/test-preparations", icon: "🇰🇷" },
+    { name: "IELTS Preparation", route: "/ielts", icon: "📝" },
+    { name: "PTE Preparation", route: "/pte", icon: "💻" },
+    { name: "Japanese Language", route: "/japanese-language", icon: "🇯🇵" },
+    { name: "Korean Language", route: "/korean-language", icon: "🇰🇷" },
   ];
 
   const services = [
@@ -199,9 +199,11 @@ export default function Navbar() {
                   whileHover={{ scale: 1.05 }}
                   className="flex items-center text-gray-700 hover:text-[#2C3C81] font-medium transition-colors py-4"
                 >
-                  STUDY DESTINATIONS
+                  <Link href="/countries">STUDY DESTINATIONS</Link>
                   <motion.div
-                    animate={{ rotate: activeDropdown === "destinations" ? 180 : 0 }}
+                    animate={{
+                      rotate: activeDropdown === "destinations" ? 180 : 0,
+                    }}
                     transition={{ duration: 0.2 }}
                   >
                     <ChevronDown className="ml-1 w-4 h-4" />
@@ -230,7 +232,9 @@ export default function Navbar() {
                               href={destination.route}
                               className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-[#F5F4F5] transition-colors group"
                             >
-                              <span className="text-2xl">{destination.flag}</span>
+                              <span className="text-2xl">
+                                {destination.flag}
+                              </span>
                               <span className="text-sm font-medium text-gray-700 group-hover:text-[#2C3C81]">
                                 {destination.name}
                               </span>
@@ -263,9 +267,11 @@ export default function Navbar() {
                   whileHover={{ scale: 1.05 }}
                   className="flex items-center text-gray-700 hover:text-[#2C3C81] font-medium transition-colors py-4"
                 >
-                  TEST PREPARATIONS
+                  <Link href="/test-preparations">TEST PREPARATIONS</Link>
                   <motion.div
-                    animate={{ rotate: activeDropdown === "testprep" ? 180 : 0 }}
+                    animate={{
+                      rotate: activeDropdown === "testprep" ? 180 : 0,
+                    }}
                     transition={{ duration: 0.2 }}
                   >
                     <ChevronDown className="ml-1 w-4 h-4" />
@@ -283,25 +289,70 @@ export default function Navbar() {
                       style={{ paddingTop: "1rem" }}
                     >
                       <div className="space-y-1 px-4">
-                        {testPreparations.map((test, index) => (
-                          <motion.div
-                            key={index}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0 * 0.05 }}
+                        >
+                          <Link
+                            href="/test-preparations/ielts"
+                            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-[#F5F4F5] transition-colors group"
                           >
-                            <Link
-                              href={test.route}
-                              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-[#F5F4F5] transition-colors group"
-                            >
-                              <span className="text-xl">{test.icon}</span>
-                              <span className="text-sm font-medium text-gray-700 group-hover:text-[#2C3C81]">
-                                {test.name}
-                              </span>
-                              <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#C73D43] group-hover:translate-x-1 transition-all ml-auto" />
-                            </Link>
-                          </motion.div>
-                        ))}
+                            <span className="text-xl">📝</span>
+                            <span className="text-sm font-medium text-gray-700 group-hover:text-[#2C3C81]">
+                              IELTS Preparation
+                            </span>
+                            <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#C73D43] group-hover:translate-x-1 transition-all ml-auto" />
+                          </Link>
+                        </motion.div>
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 1 * 0.05 }}
+                        >
+                          <Link
+                            href="/test-preparations/pte"
+                            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-[#F5F4F5] transition-colors group"
+                          >
+                            <span className="text-xl">💻</span>
+                            <span className="text-sm font-medium text-gray-700 group-hover:text-[#2C3C81]">
+                              PTE Preparation
+                            </span>
+                            <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#C73D43] group-hover:translate-x-1 transition-all ml-auto" />
+                          </Link>
+                        </motion.div>
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 2 * 0.05 }}
+                        >
+                          <Link
+                            href="/test-preparations/japanese-language"
+                            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-[#F5F4F5] transition-colors group"
+                          >
+                            <span className="text-xl">🇯🇵</span>
+                            <span className="text-sm font-medium text-gray-700 group-hover:text-[#2C3C81]">
+                              Japanese Language
+                            </span>
+                            <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#C73D43] group-hover:translate-x-1 transition-all ml-auto" />
+                          </Link>
+                        </motion.div>
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 3 * 0.05 }}
+                        >
+                          <Link
+                            href="/test-preparations/korean-language"
+                            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-[#F5F4F5] transition-colors group"
+                          >
+                            <span className="text-xl">🇰🇷</span>
+                            <span className="text-sm font-medium text-gray-700 group-hover:text-[#2C3C81]">
+                              Korean Language
+                            </span>
+                            <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#C73D43] group-hover:translate-x-1 transition-all ml-auto" />
+                          </Link>
+                        </motion.div>
                       </div>
                     </motion.div>
                   )}
@@ -329,7 +380,9 @@ export default function Navbar() {
                 >
                   SERVICES
                   <motion.div
-                    animate={{ rotate: activeDropdown === "services" ? 180 : 0 }}
+                    animate={{
+                      rotate: activeDropdown === "services" ? 180 : 0,
+                    }}
                     transition={{ duration: 0.2 }}
                   >
                     <ChevronDown className="ml-1 w-4 h-4" />
@@ -374,10 +427,10 @@ export default function Navbar() {
 
               <motion.div whileHover={{ scale: 1.05 }}>
                 <Link
-                  href="/contact"
+                  href="/blog"
                   className="text-gray-700 hover:text-[#2C3C81] font-medium transition-colors"
                 >
-                  CONTACT
+                  BLOG
                 </Link>
               </motion.div>
 
@@ -495,11 +548,25 @@ export default function Navbar() {
                     {/* Mobile Main Nav Items */}
                     <div className="space-y-4">
                       <Link
+                        href="/countries"
+                        className="block py-2 text-gray-700 hover:text-[#2C3C81] font-medium transition-colors"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        STUDY DESTINATIONS
+                      </Link>
+                      <Link
                         href="/universities"
                         className="block py-2 text-gray-700 hover:text-[#2C3C81] font-medium transition-colors"
                         onClick={() => setIsOpen(false)}
                       >
                         UNIVERSITIES
+                      </Link>
+                      <Link
+                        href="/test-preparations"
+                        className="block py-2 text-gray-700 hover:text-[#2C3C81] font-medium transition-colors"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        TEST PREPARATIONS
                       </Link>
                       <Link
                         href="/about"

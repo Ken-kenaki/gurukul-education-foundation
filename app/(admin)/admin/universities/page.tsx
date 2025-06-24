@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Search, Upload, Image as ImageIcon } from "lucide-react";
+import { Plus, Edit, Trash2, Search, Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
+import { appwriteConfig, getImageUrl } from "@/utils/appwrite";
 
 interface University {
   $id: string;
@@ -12,9 +13,7 @@ interface University {
   programs: string;
   ranking: string;
   description?: string;
-  imageId?: string;
-  imageUrl?: string;
-  createdAt?: string;
+  imageId?: string; // <-- Use imageId here from backend
 }
 
 export default function UniversitiesPage() {
@@ -22,7 +21,9 @@ export default function UniversitiesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingUniversity, setEditingUniversity] = useState<University | null>(null);
+  const [editingUniversity, setEditingUniversity] = useState<University | null>(
+    null
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -35,6 +36,8 @@ export default function UniversitiesPage() {
     file: null as File | null,
   });
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const UNIVERSITY_BUCKET = appwriteConfig.buckets.universities;
 
   useEffect(() => {
     fetchUniversities();
@@ -69,20 +72,22 @@ export default function UniversitiesPage() {
 
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('country', formData.country);
-      formDataToSend.append('intake', formData.intake);
-      formDataToSend.append('programs', formData.programs);
-      formDataToSend.append('ranking', formData.ranking);
-      formDataToSend.append('description', formData.description);
-      
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("country", formData.country);
+      formDataToSend.append("intake", formData.intake);
+      formDataToSend.append("programs", formData.programs);
+      formDataToSend.append("ranking", formData.ranking);
+      formDataToSend.append("description", formData.description);
+
       if (formData.file) {
-        formDataToSend.append('file', formData.file);
+        formDataToSend.append("file", formData.file);
       }
 
-      const url = editingUniversity ? `/api/universities/${editingUniversity.$id}` : "/api/universities";
+      const url = editingUniversity
+        ? `/api/universities/${editingUniversity.$id}`
+        : "/api/universities";
       const method = editingUniversity ? "PUT" : "POST";
-      
+
       const response = await fetch(url, {
         method,
         body: formDataToSend,
@@ -92,7 +97,7 @@ export default function UniversitiesPage() {
         const errorData = await response.json();
         throw new Error(errorData.error || "Failed to save university");
       }
-      
+
       await fetchUniversities();
       resetForm();
     } catch (err: any) {
@@ -104,9 +109,11 @@ export default function UniversitiesPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this university?")) return;
-    
+
     try {
-      const response = await fetch(`/api/universities/${id}`, { method: "DELETE" });
+      const response = await fetch(`/api/universities/${id}`, {
+        method: "DELETE",
+      });
       if (!response.ok) throw new Error("Failed to delete university");
       await fetchUniversities();
     } catch (err: any) {
@@ -125,7 +132,11 @@ export default function UniversitiesPage() {
       description: university.description || "",
       file: null,
     });
-    setPreviewUrl(university.imageUrl || null);
+    setPreviewUrl(
+      university.imageId
+        ? getImageUrl(university.imageId, UNIVERSITY_BUCKET, 400, 300)
+        : null
+    );
     setIsModalOpen(true);
   };
 
@@ -144,9 +155,15 @@ export default function UniversitiesPage() {
     setPreviewUrl(null);
   };
 
-  const filteredUniversities = universities.filter(university =>
-    university.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    university.country.toLowerCase().includes(searchTerm.toLowerCase())
+  const getUniversityImageUrl = (imageId?: string) => {
+    if (!imageId) return null;
+    return getImageUrl(imageId, UNIVERSITY_BUCKET, 400, 300);
+  };
+
+  const filteredUniversities = universities.filter(
+    (university) =>
+      university.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      university.country.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -165,7 +182,9 @@ export default function UniversitiesPage() {
       className="space-y-6"
     >
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Universities Management</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Universities Management
+        </h1>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -189,7 +208,10 @@ export default function UniversitiesPage() {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        <Search
+          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+          size={20}
+        />
         <input
           type="text"
           placeholder="Search universities..."
@@ -209,11 +231,14 @@ export default function UniversitiesPage() {
             className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
           >
             <div className="relative h-48 bg-gray-200">
-              {university.imageUrl ? (
+              {university.imageId ? (
                 <img
-                  src={university.imageUrl}
+                  src={getUniversityImageUrl(university.imageId) || ""}
                   alt={university.name}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/placeholder.jpg";
+                  }}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -221,11 +246,13 @@ export default function UniversitiesPage() {
                 </div>
               )}
             </div>
-            
+
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{university.name}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {university.name}
+                  </h3>
                   <p className="text-sm text-gray-600">{university.country}</p>
                 </div>
                 <div className="flex space-x-2">
@@ -248,11 +275,23 @@ export default function UniversitiesPage() {
                 </div>
               </div>
               <div className="space-y-2 text-sm">
-                <p><span className="font-medium">Intake:</span> {university.intake}</p>
-                <p><span className="font-medium">Programs:</span> {university.programs}</p>
-                <p><span className="font-medium">Ranking:</span> {university.ranking}</p>
+                <p>
+                  <span className="font-medium">Intake:</span>{" "}
+                  {university.intake}
+                </p>
+                <p>
+                  <span className="font-medium">Programs:</span>{" "}
+                  {university.programs}
+                </p>
+                <p>
+                  <span className="font-medium">Ranking:</span>{" "}
+                  {university.ranking}
+                </p>
                 {university.description && (
-                  <p><span className="font-medium">Description:</span> {university.description}</p>
+                  <p>
+                    <span className="font-medium">Description:</span>{" "}
+                    {university.description}
+                  </p>
                 )}
               </div>
             </div>
@@ -281,29 +320,39 @@ export default function UniversitiesPage() {
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">University Name</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  University Name
+                </label>
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Country</label>
-                <input
-                  type="text"
-                  value={formData.country}
-                  onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">University Image</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  value={formData.country}
+                  onChange={(e) =>
+                    setFormData({ ...formData, country: e.target.value })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  University Image
+                </label>
                 <input
                   type="file"
                   accept="image/*"
@@ -320,51 +369,67 @@ export default function UniversitiesPage() {
                   </div>
                 )}
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700">Intake Information</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Intake Information
+                </label>
                 <input
                   type="text"
                   value={formData.intake}
-                  onChange={(e) => setFormData({ ...formData, intake: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, intake: e.target.value })
+                  }
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all"
                   placeholder="Fall: Sep | Spring: Jan"
                   required
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700">Programs</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Programs
+                </label>
                 <input
                   type="text"
                   value={formData.programs}
-                  onChange={(e) => setFormData({ ...formData, programs: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, programs: e.target.value })
+                  }
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all"
                   placeholder="200+ undergraduate programs"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700">Ranking</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Ranking
+                </label>
                 <input
                   type="text"
                   value={formData.ranking}
-                  onChange={(e) => setFormData({ ...formData, ranking: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, ranking: e.target.value })
+                  }
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all"
                   placeholder="#1 in World University Rankings"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700">Description (Optional)</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Description (Optional)
+                </label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   rows={3}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all"
                 />
               </div>
-              
+
               <div className="flex justify-end space-x-3">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -382,7 +447,11 @@ export default function UniversitiesPage() {
                   disabled={isSubmitting}
                   className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
                 >
-                  {isSubmitting ? "Saving..." : (editingUniversity ? "Update" : "Create")}
+                  {isSubmitting
+                    ? "Saving..."
+                    : editingUniversity
+                    ? "Update"
+                    : "Create"}
                 </motion.button>
               </div>
             </form>

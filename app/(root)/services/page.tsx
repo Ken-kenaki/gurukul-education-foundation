@@ -1,20 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  GraduationCap, 
-  FileText, 
-  Award, 
-  Plane, 
-  Users, 
+import {
+  GraduationCap,
+  FileText,
+  Award,
+  Plane,
+  Users,
   BookOpen,
   ArrowRight,
   CheckCircle,
   Star,
   Clock,
-  Globe
+  Globe,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 interface Service {
   id: string;
@@ -23,7 +24,6 @@ interface Service {
   features: string[];
   icon: React.ReactNode;
   color: string;
-  price: string;
   duration: string;
   image: string;
 }
@@ -35,111 +35,117 @@ export default function ServicesPage() {
     {
       id: "study-abroad",
       title: "Study Abroad Consultation",
-      description: "Comprehensive guidance for studying in South Korea, Japan, UK, Australia, and Malta with personalized university selection and application support.",
+      description:
+        "Comprehensive guidance for studying in South Korea, Japan, UK, Australia, and Malta with personalized university selection and application support.",
       features: [
         "University selection based on your profile",
         "Application assistance and document preparation",
         "Scholarship guidance and financial planning",
         "Visa application support",
         "Pre-departure orientation",
-        "Post-arrival assistance"
+        "Post-arrival assistance",
       ],
       icon: <GraduationCap size={40} />,
       color: "from-blue-500 to-blue-600",
-      price: "Free Consultation",
       duration: "Ongoing Support",
-      image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=300&fit=crop"
+      image:
+        "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=300&fit=crop",
     },
     {
       id: "test-prep",
       title: "Test Preparations",
-      description: "Expert coaching for IELTS, PTE, Japanese, and Korean language tests with proven success rates and personalized study plans.",
+      description:
+        "Expert coaching for IELTS, PTE, Japanese, and Korean language tests with proven success rates and personalized study plans.",
       features: [
         "IELTS and PTE preparation",
         "Japanese language (JLPT N5-N1)",
         "Korean language (TOPIK I & II)",
         "Mock tests and practice sessions",
         "Speaking practice with native speakers",
-        "Flexible online and offline classes"
+        "Flexible online and offline classes",
       ],
       icon: <BookOpen size={40} />,
       color: "from-green-500 to-green-600",
-      price: "Starting from $299",
       duration: "6-24 weeks",
-      image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=300&fit=crop"
+      image:
+        "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=300&fit=crop",
     },
     {
       id: "visa-assistance",
       title: "Visa Assistance",
-      description: "Complete visa application support with document preparation, interview coaching, and submission assistance for all study destinations.",
+      description:
+        "Complete visa application support with document preparation, interview coaching, and submission assistance for all study destinations.",
       features: [
         "Visa application form completion",
         "Document checklist and preparation",
         "Interview preparation and coaching",
         "Application submission support",
         "Status tracking and follow-up",
-        "Rejection case handling"
+        "Rejection case handling",
       ],
       icon: <FileText size={40} />,
       color: "from-purple-500 to-purple-600",
-      price: "Starting from $199",
       duration: "4-8 weeks",
-      image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&h=300&fit=crop"
+      image:
+        "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&h=300&fit=crop",
     },
     {
       id: "scholarship",
       title: "Scholarship Guidance",
-      description: "Maximize your funding opportunities with our comprehensive scholarship search and application assistance program.",
+      description:
+        "Maximize your funding opportunities with our comprehensive scholarship search and application assistance program.",
       features: [
         "Scholarship database access",
         "Eligibility assessment",
         "Application essay writing support",
         "Document preparation assistance",
         "Interview preparation",
-        "Follow-up and status tracking"
+        "Follow-up and status tracking",
       ],
       icon: <Award size={40} />,
       color: "from-yellow-500 to-orange-500",
-      price: "Starting from $149",
       duration: "2-6 weeks",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop"
+      image:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
     },
     {
       id: "pre-departure",
       title: "Pre-Departure Briefing",
-      description: "Comprehensive orientation program to prepare you for life abroad including cultural adaptation and practical guidance.",
+      description:
+        "Comprehensive orientation program to prepare you for life abroad including cultural adaptation and practical guidance.",
       features: [
         "Cultural orientation sessions",
         "Accommodation guidance",
         "Banking and financial setup",
         "Health insurance assistance",
         "Airport pickup arrangements",
-        "Emergency contact setup"
+        "Emergency contact setup",
       ],
       icon: <Plane size={40} />,
       color: "from-red-500 to-pink-500",
-      price: "Included with consultation",
       duration: "1-2 weeks",
-      image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=300&fit=crop"
+      image:
+        "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=300&fit=crop",
     },
     {
       id: "post-arrival",
       title: "Post-Arrival Support",
-      description: "Continued support after you reach your destination to ensure smooth transition and academic success.",
+      description:
+        "Continued support after you reach your destination to ensure smooth transition and academic success.",
       features: [
         "Airport pickup coordination",
         "Initial settlement assistance",
         "University enrollment support",
         "Local orientation and guidance",
         "Emergency support hotline",
-        "Regular check-ins and counseling"
+        "Regular check-ins and counseling",
       ],
       icon: <Users size={40} />,
       color: "from-indigo-500 to-purple-500",
-      price: "Starting from $99",
       duration: "First 3 months",
-      image: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=300&fit=crop"
-    }
+      image:
+        "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=300&fit=crop",
+    },
   ];
 
   const containerVariants = {
@@ -147,9 +153,9 @@ export default function ServicesPage() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const itemVariants = {
@@ -158,9 +164,9 @@ export default function ServicesPage() {
       y: 0,
       opacity: 1,
       transition: {
-        duration: 0.5
-      }
-    }
+        duration: 0.5,
+      },
+    },
   };
 
   return (
@@ -177,7 +183,8 @@ export default function ServicesPage() {
             Our Services
           </h1>
           <p className="text-lg text-[#2C3C81]/80 max-w-3xl mx-auto">
-            Comprehensive support for your international education journey from consultation to post-arrival assistance
+            Comprehensive support for your international education journey from
+            consultation to post-arrival assistance
           </p>
         </motion.div>
 
@@ -218,39 +225,45 @@ export default function ServicesPage() {
               key={service.id}
               variants={itemVariants}
               whileHover={{ y: -5, scale: 1.02 }}
-              className="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer group"
-              onClick={() => setSelectedService(service)}
+              className="bg-white rounded-xl shadow-lg overflow-hidden"
             >
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-48 overflow-hidden group">
                 <img
                   src={service.image}
                   alt={service.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                <div className={`absolute inset-0 bg-gradient-to-r ${service.color} opacity-80`} />
+                <div
+                  className={`absolute inset-0 bg-gradient-to-r ${service.color} opacity-80`}
+                />
                 <div className="absolute inset-0 flex items-center justify-center text-white">
                   {service.icon}
                 </div>
               </div>
-              
+
               <div className="p-6">
                 <h3 className="text-xl font-bold text-[#2C3C81] mb-2 group-hover:text-[#C73D43] transition-colors">
                   {service.title}
                 </h3>
-                <p className="text-[#2C3C81]/70 mb-4 line-clamp-3">{service.description}</p>
-                
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center text-sm text-[#2C3C81]/70">
-                    <Clock size={16} className="mr-1 text-[#C73D43]" />
-                    {service.duration}
-                  </div>
-                  <div className="text-lg font-bold text-[#C73D43]">{service.price}</div>
+                <p className="text-[#2C3C81]/70 mb-4 line-clamp-3">
+                  {service.description}
+                </p>
+
+                <div className="flex items-center text-sm text-[#2C3C81]/70 mb-4">
+                  <Clock size={16} className="mr-1 text-[#C73D43]" />
+                  {service.duration}
                 </div>
 
-                <button className="w-full bg-[#2C3C81] text-white py-2 rounded-lg hover:bg-[#C73D43] transition-colors group flex items-center justify-center">
-                  <span>Learn More</span>
-                  <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                </button>
+                <Link
+                  href="/contact"
+                  className="w-full bg-[#2C3C81] text-white py-2 rounded-lg hover:bg-[#C73D43] transition-colors group flex items-center justify-center"
+                >
+                  <span>Free Consultation</span>
+                  <ArrowRight
+                    size={16}
+                    className="ml-2 group-hover:translate-x-1 transition-transform"
+                  />
+                </Link>
               </div>
             </motion.div>
           ))}
@@ -278,11 +291,15 @@ export default function ServicesPage() {
                   alt={selectedService.title}
                   className="w-full h-full object-cover"
                 />
-                <div className={`absolute inset-0 bg-gradient-to-r ${selectedService.color} opacity-80`} />
+                <div
+                  className={`absolute inset-0 bg-gradient-to-r ${selectedService.color} opacity-80`}
+                />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center text-white">
                     <div className="mb-4">{selectedService.icon}</div>
-                    <h2 className="text-3xl font-bold">{selectedService.title}</h2>
+                    <h2 className="text-3xl font-bold">
+                      {selectedService.title}
+                    </h2>
                   </div>
                 </div>
                 <button
@@ -292,33 +309,44 @@ export default function ServicesPage() {
                   ×
                 </button>
               </div>
-              
+
               <div className="p-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   <div>
-                    <h3 className="text-xl font-bold text-[#2C3C81] mb-4">Service Overview</h3>
-                    <p className="text-[#2C3C81]/70 mb-6">{selectedService.description}</p>
-                    
+                    <h3 className="text-xl font-bold text-[#2C3C81] mb-4">
+                      Service Overview
+                    </h3>
+                    <p className="text-[#2C3C81]/70 mb-6">
+                      {selectedService.description}
+                    </p>
+
                     <div className="grid grid-cols-2 gap-4 mb-6">
                       <div className="text-center p-4 bg-[#F5F4F5] rounded-lg">
-                        <Clock size={24} className="mx-auto text-[#C73D43] mb-2" />
-                        <div className="font-medium text-[#2C3C81]">Duration</div>
-                        <div className="text-sm text-[#2C3C81]/70">{selectedService.duration}</div>
-                      </div>
-                      <div className="text-center p-4 bg-[#F5F4F5] rounded-lg">
-                        <Star size={24} className="mx-auto text-[#C73D43] mb-2" />
-                        <div className="font-medium text-[#2C3C81]">Price</div>
-                        <div className="text-sm text-[#2C3C81]/70">{selectedService.price}</div>
+                        <Clock
+                          size={24}
+                          className="mx-auto text-[#C73D43] mb-2"
+                        />
+                        <div className="font-medium text-[#2C3C81]">
+                          Duration
+                        </div>
+                        <div className="text-sm text-[#2C3C81]/70">
+                          {selectedService.duration}
+                        </div>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div>
-                    <h3 className="text-xl font-bold text-[#2C3C81] mb-4">What's Included</h3>
+                    <h3 className="text-xl font-bold text-[#2C3C81] mb-4">
+                      What's Included
+                    </h3>
                     <div className="space-y-3 mb-6">
                       {selectedService.features.map((feature, index) => (
                         <div key={index} className="flex items-start">
-                          <CheckCircle size={20} className="text-[#C73D43] mr-3 mt-0.5 flex-shrink-0" />
+                          <CheckCircle
+                            size={20}
+                            className="text-[#C73D43] mr-3 mt-0.5 flex-shrink-0"
+                          />
                           <span className="text-[#2C3C81]/70">{feature}</span>
                         </div>
                       ))}
@@ -327,12 +355,12 @@ export default function ServicesPage() {
                 </div>
 
                 <div className="flex gap-3 mt-6">
-                  <button className="flex-1 bg-[#C73D43] text-white py-3 rounded-lg hover:bg-[#2C3C81] transition-colors">
-                    Get Started
-                  </button>
-                  <button className="flex-1 border border-[#2C3C81] text-[#2C3C81] py-3 rounded-lg hover:bg-[#2C3C81] hover:text-white transition-colors">
+                  <Link
+                    href="/contact"
+                    className="flex-1 bg-[#C73D43] text-white py-3 rounded-lg hover:bg-[#2C3C81] transition-colors text-center"
+                  >
                     Free Consultation
-                  </button>
+                  </Link>
                 </div>
               </div>
             </motion.div>
@@ -346,13 +374,19 @@ export default function ServicesPage() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="bg-[#2C3C81] rounded-xl p-8 mt-12 text-center text-white"
         >
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to Start Your Journey?</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+            Ready to Start Your Journey?
+          </h2>
           <p className="text-lg mb-6 opacity-90">
-            Get personalized guidance from our expert counselors and take the first step towards your international education goals.
+            Get personalized guidance from our expert counselors and take the
+            first step towards your international education goals.
           </p>
-          <button className="bg-[#C73D43] text-white px-8 py-3 rounded-lg hover:bg-white hover:text-[#2C3C81] transition-colors font-semibold">
+          <Link
+            href="/contact"
+            className="inline-block bg-[#C73D43] text-white px-8 py-3 rounded-lg hover:bg-white hover:text-[#2C3C81] transition-colors font-semibold"
+          >
             Book Free Consultation
-          </button>
+          </Link>
         </motion.div>
       </div>
     </div>

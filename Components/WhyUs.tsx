@@ -42,7 +42,7 @@ export default function WhyUs() {
       title: "Decades of Expertise",
       description:
         "With over 20 years in international education, our counselors have successfully guided thousands of students to their dream universities worldwide.",
-      image: "/why-us-1.jpg",
+      image: "/why-us-1.jpeg",
       imagePosition: "left",
       buttonText: "MEET OUR TEAM",
     },
@@ -50,7 +50,7 @@ export default function WhyUs() {
       title: "Personalized Approach",
       description:
         "Every student receives a customized roadmap tailored to their academic background, career goals, and personal aspirations.",
-      image: "/why-us-2.jpg",
+      image: "/why-us-2.jpeg",
       imagePosition: "right",
       buttonText: "SEE SUCCESS STORIES",
     },
@@ -58,7 +58,7 @@ export default function WhyUs() {
       title: "End-to-End Support",
       description:
         "From test preparation to visa approval and post-arrival assistance, we're with you at every step of your journey.",
-      image: "/why-us-3.jpg",
+      image: "/why-us-3.jpeg",
       imagePosition: "left",
       buttonText: "VIEW OUR SERVICES",
     },
