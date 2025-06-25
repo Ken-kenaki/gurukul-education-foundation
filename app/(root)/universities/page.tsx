@@ -9,14 +9,13 @@ import {
   Star,
   ArrowRight,
   Filter,
+  Heart,
+  Share2,
 } from "lucide-react";
 import { motion } from "framer-motion";
-
-// Import centralized appwrite config and function
-import {
-  appwriteConfig,
-  getImageUrl as getAppwriteImageUrl,
-} from "@/utils/appwrite";
+import Image from "next/image";
+import Link from "next/link";
+import { appwriteConfig, getImageUrl } from "@/utils/appwrite";
 
 interface University {
   $id: string;
@@ -27,6 +26,9 @@ interface University {
   ranking: string;
   description?: string;
   imageId?: string;
+  website?: string;
+  tuition?: string;
+  scholarship?: string;
 }
 
 export default function UniversitiesPage() {
@@ -39,6 +41,8 @@ export default function UniversitiesPage() {
   const [selectedCountry, setSelectedCountry] = useState("all");
   const [selectedUniversity, setSelectedUniversity] =
     useState<University | null>(null);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [sortOption, setSortOption] = useState("default");
 
   const countries = [
     "all",
@@ -50,13 +54,31 @@ export default function UniversitiesPage() {
     "Malta",
   ];
 
+  const sortOptions = [
+    { value: "default", label: "Default" },
+    { value: "name-asc", label: "Name (A-Z)" },
+    { value: "name-desc", label: "Name (Z-A)" },
+    { value: "ranking-asc", label: "Ranking (Low to High)" },
+    { value: "ranking-desc", label: "Ranking (High to Low)" },
+  ];
+
   useEffect(() => {
     fetchUniversities();
+    // Load favorites from localStorage
+    const savedFavorites = localStorage.getItem("universityFavorites");
+    if (savedFavorites) {
+      setFavorites(JSON.parse(savedFavorites));
+    }
   }, []);
 
   useEffect(() => {
-    filterUniversities();
-  }, [universities, searchTerm, selectedCountry]);
+    filterAndSortUniversities();
+  }, [universities, searchTerm, selectedCountry, sortOption]);
+
+  useEffect(() => {
+    // Save favorites to localStorage
+    localStorage.setItem("universityFavorites", JSON.stringify(favorites));
+  }, [favorites]);
 
   const fetchUniversities = async () => {
     try {
@@ -73,38 +95,73 @@ export default function UniversitiesPage() {
     }
   };
 
-  const filterUniversities = () => {
-    let filtered = universities;
+  const filterAndSortUniversities = () => {
+    let filtered = [...universities];
 
+    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(
         (uni) =>
           uni.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          uni.country.toLowerCase().includes(searchTerm.toLowerCase())
+          uni.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          uni.programs.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
+    // Filter by country
     if (selectedCountry !== "all") {
       filtered = filtered.filter(
         (uni) => uni.country.toLowerCase() === selectedCountry.toLowerCase()
       );
     }
 
+    // Sort universities
+    switch (sortOption) {
+      case "name-asc":
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "name-desc":
+        filtered.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "ranking-asc":
+        filtered.sort((a, b) => parseInt(a.ranking) - parseInt(b.ranking));
+        break;
+      case "ranking-desc":
+        filtered.sort((a, b) => parseInt(b.ranking) - parseInt(a.ranking));
+        break;
+      default:
+        // Default sorting (original order)
+        break;
+    }
+
     setFilteredUniversities(filtered);
   };
 
-  // Use centralized getImageUrl with bucket for universities
-  const getUniversityImageUrl = (imageId?: string) => {
-    if (!imageId) {
-      // fallback to placeholder if no imageId
-      return `https://picsum.photos/400/300?random=${Math.random()}`;
-    }
-    return getAppwriteImageUrl(
-      imageId,
-      appwriteConfig.buckets.universities,
-      400,
-      300
+  const toggleFavorite = (id: string) => {
+    setFavorites((prev) =>
+      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]
     );
+  };
+
+  const shareUniversity = (university: University) => {
+    if (navigator.share) {
+      navigator.share({
+        title: university.name,
+        text: `Check out ${university.name} in ${university.country}`,
+        url: window.location.href,
+      });
+    } else {
+      // Fallback for browsers that don't support Web Share API
+      navigator.clipboard.writeText(
+        `${university.name} - ${window.location.href}`
+      );
+      alert("University link copied to clipboard!");
+    }
+  };
+
+  const getUniversityImageUrl = (imageId?: string) => {
+    if (!imageId) return "/university-placeholder.jpg";
+    return getImageUrl(imageId, appwriteConfig.buckets.universities, 400, 300);
   };
 
   const containerVariants = {
@@ -178,22 +235,37 @@ export default function UniversitiesPage() {
                 className="w-full pl-10 pr-4 py-3 border border-[#B2ACCE]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C73D43] focus:border-transparent"
               />
             </div>
-            <div className="relative">
-              <Filter
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#B2ACCE]"
-                size={20}
-              />
-              <select
-                value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e.target.value)}
-                className="pl-10 pr-8 py-3 border border-[#B2ACCE]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C73D43] focus:border-transparent bg-white"
-              >
-                {countries.map((country) => (
-                  <option key={country} value={country}>
-                    {country === "all" ? "All Countries" : country}
-                  </option>
-                ))}
-              </select>
+            <div className="flex gap-4">
+              <div className="relative">
+                <Filter
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#B2ACCE]"
+                  size={20}
+                />
+                <select
+                  value={selectedCountry}
+                  onChange={(e) => setSelectedCountry(e.target.value)}
+                  className="pl-10 pr-8 py-3 border border-[#B2ACCE]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C73D43] focus:border-transparent bg-white"
+                >
+                  {countries.map((country) => (
+                    <option key={country} value={country}>
+                      {country === "all" ? "All Countries" : country}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="relative">
+                <select
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value)}
+                  className="pl-4 pr-8 py-3 border border-[#B2ACCE]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C73D43] focus:border-transparent bg-white"
+                >
+                  {sortOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -210,14 +282,56 @@ export default function UniversitiesPage() {
               key={university.$id}
               variants={itemVariants}
               whileHover={{ y: -5, scale: 1.02 }}
-              className="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer group"
-              onClick={() => setSelectedUniversity(university)}
+              className="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer group relative"
             >
-              <div className="relative h-48 overflow-hidden">
-                <img
+              {/* Favorite Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(university.$id);
+                }}
+                className="absolute top-4 left-4 z-10 p-2 bg-white/80 rounded-full hover:bg-white transition-colors"
+                aria-label={
+                  favorites.includes(university.$id)
+                    ? "Remove from favorites"
+                    : "Add to favorites"
+                }
+              >
+                <Heart
+                  size={20}
+                  className={
+                    favorites.includes(university.$id)
+                      ? "fill-[#C73D43] text-[#C73D43]"
+                      : "text-[#2C3C81]"
+                  }
+                />
+              </button>
+
+              {/* Share Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  shareUniversity(university);
+                }}
+                className="absolute top-4 right-16 z-10 p-2 bg-white/80 rounded-full hover:bg-white transition-colors"
+                aria-label="Share this university"
+              >
+                <Share2 size={20} className="text-[#2C3C81]" />
+              </button>
+
+              <div
+                className="relative h-48 overflow-hidden"
+                onClick={() => setSelectedUniversity(university)}
+              >
+                <Image
                   src={getUniversityImageUrl(university.imageId)}
                   alt={university.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src =
+                      "/university-placeholder.jpg";
+                  }}
                 />
                 <div className="absolute top-4 right-4 bg-[#C73D43] text-white px-3 py-1 rounded-full text-sm font-medium">
                   {university.country}
@@ -248,7 +362,10 @@ export default function UniversitiesPage() {
                   </div>
                 </div>
 
-                <button className="w-full bg-[#2C3C81] text-white py-2 rounded-lg hover:bg-[#C73D43] transition-colors group flex items-center justify-center">
+                <button
+                  onClick={() => setSelectedUniversity(university)}
+                  className="w-full bg-[#2C3C81] text-white py-2 rounded-lg hover:bg-[#C73D43] transition-colors group flex items-center justify-center"
+                >
                   <span>Learn More</span>
                   <ArrowRight
                     size={16}
@@ -269,6 +386,16 @@ export default function UniversitiesPage() {
             <div className="text-[#B2ACCE] text-lg">
               No universities found matching your criteria.
             </div>
+            <button
+              onClick={() => {
+                setSearchTerm("");
+                setSelectedCountry("all");
+                setSortOption("default");
+              }}
+              className="mt-4 bg-[#C73D43] text-white px-6 py-2 rounded-lg hover:bg-[#2C3C81] transition-colors"
+            >
+              Reset Filters
+            </button>
           </motion.div>
         )}
 
@@ -289,10 +416,15 @@ export default function UniversitiesPage() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative h-64">
-                <img
+                <Image
                   src={getUniversityImageUrl(selectedUniversity.imageId)}
                   alt={selectedUniversity.name}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src =
+                      "/university-placeholder.jpg";
+                  }}
                 />
                 <button
                   onClick={() => setSelectedUniversity(null)}
@@ -303,9 +435,38 @@ export default function UniversitiesPage() {
               </div>
 
               <div className="p-6">
-                <h2 className="text-2xl font-bold text-[#2C3C81] mb-4">
-                  {selectedUniversity.name}
-                </h2>
+                <div className="flex justify-between items-start mb-4">
+                  <h2 className="text-2xl font-bold text-[#2C3C81]">
+                    {selectedUniversity.name}
+                  </h2>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => toggleFavorite(selectedUniversity.$id)}
+                      className="p-2 hover:bg-gray-100 rounded-full"
+                      aria-label={
+                        favorites.includes(selectedUniversity.$id)
+                          ? "Remove from favorites"
+                          : "Add to favorites"
+                      }
+                    >
+                      <Heart
+                        size={20}
+                        className={
+                          favorites.includes(selectedUniversity.$id)
+                            ? "fill-[#C73D43] text-[#C73D43]"
+                            : "text-[#2C3C81]"
+                        }
+                      />
+                    </button>
+                    <button
+                      onClick={() => shareUniversity(selectedUniversity)}
+                      className="p-2 hover:bg-gray-100 rounded-full"
+                      aria-label="Share this university"
+                    >
+                      <Share2 size={20} className="text-[#2C3C81]" />
+                    </button>
+                  </div>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   <div className="space-y-3">
@@ -329,6 +490,19 @@ export default function UniversitiesPage() {
                         </div>
                       </div>
                     </div>
+                    {selectedUniversity.tuition && (
+                      <div className="flex items-center">
+                        <BookOpen size={18} className="mr-3 text-[#C73D43]" />
+                        <div>
+                          <div className="font-medium text-[#2C3C81]">
+                            Tuition Fees
+                          </div>
+                          <div className="text-[#2C3C81]/70">
+                            {selectedUniversity.tuition}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-3">
@@ -354,6 +528,19 @@ export default function UniversitiesPage() {
                         </div>
                       </div>
                     </div>
+                    {selectedUniversity.scholarship && (
+                      <div className="flex items-center">
+                        <Star size={18} className="mr-3 text-[#C73D43]" />
+                        <div>
+                          <div className="font-medium text-[#2C3C81]">
+                            Scholarships
+                          </div>
+                          <div className="text-[#2C3C81]/70">
+                            {selectedUniversity.scholarship}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -367,12 +554,22 @@ export default function UniversitiesPage() {
                 )}
 
                 <div className="flex gap-3">
-                  <button className="flex-1 bg-[#C73D43] text-white py-3 rounded-lg hover:bg-[#2C3C81] transition-colors">
-                    Apply Now
-                  </button>
-                  <button className="flex-1 border border-[#2C3C81] text-[#2C3C81] py-3 rounded-lg hover:bg-[#2C3C81] hover:text-white transition-colors">
+                  {selectedUniversity.website && (
+                    <a
+                      href={selectedUniversity.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-[#C73D43] text-white py-3 rounded-lg hover:bg-[#2C3C81] transition-colors text-center"
+                    >
+                      Visit Website
+                    </a>
+                  )}
+                  <Link
+                    href="/contact"
+                    className="flex-1 border border-[#2C3C81] text-[#2C3C81] py-3 rounded-lg hover:bg-[#2C3C81] hover:text-white transition-colors text-center"
+                  >
                     Get Consultation
-                  </button>
+                  </Link>
                 </div>
               </div>
             </motion.div>

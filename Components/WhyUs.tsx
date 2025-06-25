@@ -12,6 +12,7 @@ interface FeatureItem {
   image: string;
   imagePosition: "left" | "right";
   buttonText: string;
+  buttonLink: string;
 }
 
 export default function WhyUs() {
@@ -54,6 +55,7 @@ export default function WhyUs() {
       image: "/why-us-1.jpeg",
       imagePosition: "left",
       buttonText: "MEET OUR TEAM",
+      buttonLink: "/about", // Updated link to /about route
     },
     {
       title: "Personalized Approach",
@@ -62,6 +64,7 @@ export default function WhyUs() {
       image: "/why-us-2.jpeg",
       imagePosition: "right",
       buttonText: "SEE SUCCESS STORIES",
+      buttonLink: "/#stories", // Updated link to #stories anchor
     },
     {
       title: "End-to-End Support",
@@ -70,6 +73,7 @@ export default function WhyUs() {
       image: "/why-us-3.jpeg",
       imagePosition: "left",
       buttonText: "VIEW OUR SERVICES",
+      buttonLink: "/services", // Updated link to /services route
     },
   ];
 
@@ -122,13 +126,7 @@ export default function WhyUs() {
                 {feature.description}
               </p>
               <Link
-                href={
-                  index === 0
-                    ? "/team"
-                    : index === 1
-                    ? "/success-stories"
-                    : "/services"
-                }
+                href={feature.buttonLink}
                 className="group inline-flex items-center bg-[#C73D43] text-[#F5F4F5] px-6 py-3 rounded-lg font-semibold hover:bg-[#2C3C81] hover:shadow-lg transition-all duration-300 shadow-md"
               >
                 <span>{feature.buttonText}</span>

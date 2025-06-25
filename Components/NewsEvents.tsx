@@ -128,7 +128,7 @@ export default function TextCarousel() {
 
         <div className="text-center mt-8">
           <Link
-            href="/news-offers"
+            href="/news-offer"
             className="group inline-flex items-center bg-[#C73D43] text-[#F5F4F5] px-6 py-3 rounded-lg font-semibold hover:bg-[#2C3C81] transition-colors"
           >
             View All Updates

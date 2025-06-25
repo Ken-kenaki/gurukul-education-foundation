@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 interface NewsEvent {
@@ -51,6 +52,11 @@ export default function NewsOfferPage() {
     return item.type === activeTab && item.status === "published";
   });
 
+  // Get only events for the events section
+  const events = newsEvents.filter(
+    (item) => item.type === "event" && item.status === "published"
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center pt-32">
@@ -95,7 +101,7 @@ export default function NewsOfferPage() {
   }
 
   return (
-    <main className="min-h-screen pt-32 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <main className="overflow-x-hidden min-h-screen pt-52 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
       {/* Hero Section */}
       <section className="mb-12 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -139,7 +145,7 @@ export default function NewsOfferPage() {
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
-              Upcoming Events
+              Events
             </button>
           </nav>
         </div>
@@ -170,7 +176,7 @@ export default function NewsOfferPage() {
               ? "Check back later for updates"
               : activeTab === "news"
               ? "We'll post news and offers here soon"
-              : "No upcoming events scheduled yet"}
+              : "No events scheduled yet"}
           </p>
         </section>
       ) : (
@@ -180,7 +186,7 @@ export default function NewsOfferPage() {
               ? "Latest Updates"
               : activeTab === "news"
               ? "News & Offers"
-              : "Upcoming Events"}
+              : "Our Events"}
           </h2>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {filteredItems.map((item) => (
@@ -214,6 +220,58 @@ export default function NewsOfferPage() {
                     <div className="flex space-x-1 text-sm text-gray-500">
                       <time dateTime={item.date}>
                         {new Date(item.date).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </time>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Events Section - Always shown but only if there are events */}
+      {events.length > 0 && (
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+            Our Events
+          </h2>
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {events.map((event) => (
+              <article
+                key={event.$id}
+                className="flex flex-col overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+              >
+                {event.imageId && (
+                  <div className="flex-shrink-0 h-48 overflow-hidden">
+                    <img
+                      src={getImageUrl(event.imageId) || undefined}
+                      alt={event.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 bg-white p-6 flex flex-col justify-between">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-[#C73D43] mb-2">
+                      Event
+                    </p>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                      {event.title}
+                    </h3>
+                    <p className="mt-3 text-base text-gray-500 line-clamp-3">
+                      {event.content}
+                    </p>
+                  </div>
+                  <div className="mt-6 flex items-center">
+                    <div className="flex space-x-1 text-sm text-gray-500">
+                      <time dateTime={event.date}>
+                        {new Date(event.date).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "long",
                           day: "numeric",

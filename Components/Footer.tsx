@@ -40,40 +40,58 @@ export default function Footer() {
 
   const quickLinks: FooterLink[] = [
     { name: "Home", url: "/" },
+    { name: "Study Destinations", url: "/countries" },
+    { name: "Universities", url: "/universities" },
+    { name: "Test Preparations", url: "/test-preparations" },
     { name: "About Us", url: "/about" },
     { name: "Services", url: "/services" },
-    { name: "Testimonials", url: "/testimonials" },
+    { name: "Blog", url: "/blog" },
     { name: "Contact", url: "/contact" },
   ];
 
   const destinations: FooterLink[] = [
-    { name: "USA", url: "/destinations/usa" },
-    { name: "UK", url: "/destinations/uk" },
-    { name: "Canada", url: "/destinations/canada" },
-    { name: "Australia", url: "/destinations/australia" },
-    { name: "Germany", url: "/destinations/germany" },
+    { name: "South Korea", url: "/south-korea" },
+    { name: "Australia", url: "/australia" },
+    { name: "Japan", url: "/japan" },
+    { name: "UK", url: "/uk" },
+    { name: "Malta", url: "/malta" },
+  ];
+
+  const testPreparations: FooterLink[] = [
+    { name: "IELTS Preparation", url: "/test-preparations/ielts" },
+    { name: "PTE Preparation", url: "/test-preparations/pte" },
+    { name: "Japanese Language", url: "/test-preparations/japanese-language" },
+    { name: "Korean Language", url: "/test-preparations/korean-language" },
   ];
 
   const contactInfo: ContactInfo[] = [
     {
       icon: <MapPin className="flex-shrink-0 mt-1 text-[#C73D43]" size={18} />,
-      text: "123 Education St, Knowledge City, 10101",
+      text: "Gurukul Education Foundation, Kathmandu, Nepal",
     },
     {
       icon: <Phone className="text-[#C73D43]" size={18} />,
-      text: "+1 (123) 456-7890",
-      url: "tel:+11234567890",
+      text: "+977-9844162726",
+      url: "tel:+9779844162726",
       isLink: true,
     },
     {
       icon: <Mail className="text-[#C73D43]" size={18} />,
-      text: "info@gurukul.edu",
-      url: "mailto:info@gurukul.edu",
+      text: "info@gurukuleducation.com",
+      url: "mailto:info@gurukuleducation.com",
       isLink: true,
     },
     {
       icon: <Clock className="text-[#C73D43]" size={18} />,
-      text: "Mon-Fri: 9AM - 6PM",
+      text: "Mon-Fri: 9:00 AM - 6:00 PM",
+    },
+    {
+      icon: <Clock className="text-[#C73D43]" size={18} />,
+      text: "Sat: 10:00 AM - 4:00 PM",
+    },
+    {
+      icon: <Clock className="text-[#C73D43]" size={18} />,
+      text: "Sun: Closed",
     },
   ];
 
@@ -94,7 +112,7 @@ export default function Footer() {
               <span className="text-[#C73D43]">Education</span>
             </h2>
             <p className="text-[#B2ACCE] text-sm sm:text-base">
-              Transforming dreams into global education realities since 2010.
+              Transforming dreams into global education realities.
             </p>
             <div className="flex space-x-4 pt-2">
               {socialLinks.map((social, index) => (

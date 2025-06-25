@@ -7,6 +7,7 @@ import { Navigation, Autoplay } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
+import Image from "next/image";
 
 interface Country {
   name: string;
@@ -25,81 +26,51 @@ export default function CountriesCarousel() {
       name: "United States",
       flag: "🇺🇸",
       image: "/usa.jpg",
-      intake: "Fall: Aug-Sep | Spring: Jan",
-      programs: "4,000+ institutions",
-      ranking: "Top destinations: NYU, Harvard, Stanford",
+      intake: "Fall: Aug-Sep | Spring: Jan | Summer: May-Jun",
+      programs: "4,000+ institutions offering diverse programs",
+      ranking: "Top universities: Harvard, Stanford, MIT, Caltech, Columbia",
+    },
+    {
+      name: "Malta",
+      flag: "🇲🇹",
+      image: "/malta.jpg",
+      intake: "Fall: October | Spring: February",
+      programs: "English-taught programs at universities and colleges",
+      ranking:
+        "Top institutions: University of Malta, Malta College of Arts, Science & Technology",
     },
     {
       name: "United Kingdom",
       flag: "🇬🇧",
       image: "/uk.jpg",
-      intake: "Fall: Sep-Oct | Spring: Jan",
-      programs: "160+ universities",
-      ranking: "Top destinations: Oxford, Cambridge, Imperial",
-    },
-    {
-      name: "Canada",
-      flag: "🇨🇦",
-      image: "/canada.jpg",
-      intake: "Fall: Sep | Winter: Jan",
-      programs: "100+ universities",
-      ranking: "Top destinations: UofT, UBC, McGill",
+      intake: "Fall: Sep-Oct | Spring: Jan (limited programs)",
+      programs: "160+ universities with 50,000+ courses",
+      ranking: "Top universities: Oxford, Cambridge, Imperial, LSE, UCL",
     },
     {
       name: "Australia",
       flag: "🇦🇺",
       image: "/australia.jpg",
-      intake: "Semester 1: Feb | Semester 2: Jul",
-      programs: "43 universities",
-      ranking: "Top destinations: Melbourne, Sydney, ANU",
-    },
-    {
-      name: "Germany",
-      flag: "🇩🇪",
-      image: "/germany.jpg",
-      intake: "Winter: Oct | Summer: Apr",
-      programs: "400+ institutions",
-      ranking: "Top destinations: TUM, Heidelberg, LMU",
-    },
-    {
-      name: "Japan",
-      flag: "🇯🇵",
-      image: "/japan.jpg",
-      intake: "Spring: Apr | Fall: Sep",
-      programs: "800+ universities",
-      ranking: "Top destinations: Tokyo, Kyoto, Osaka",
+      intake: "Semester 1: February | Semester 2: July",
+      programs: "43 universities with strong research programs",
+      ranking: "Top universities: Melbourne, Sydney, ANU, Queensland, Monash",
     },
     {
       name: "South Korea",
       flag: "🇰🇷",
       image: "/korea.jpg",
-      intake: "Spring: Mar | Fall: Sep",
-      programs: "400+ universities",
-      ranking: "Top destinations: SNU, KAIST, Yonsei",
+      intake: "Spring: March | Fall: September",
+      programs: "400+ universities with global partnerships",
+      ranking:
+        "Top universities: Seoul National, KAIST, POSTECH, Yonsei, Korea University",
     },
     {
-      name: "France",
-      flag: "🇫🇷",
-      image: "/france.jpg",
-      intake: "Fall: Sep | Spring: Jan",
-      programs: "3,500+ institutions",
-      ranking: "Top destinations: Sorbonne, ENS, Polytechnique",
-    },
-    {
-      name: "Netherlands",
-      flag: "🇳🇱",
-      image: "/netherlands.jpg",
-      intake: "Fall: Sep | Spring: Feb",
-      programs: "50+ universities",
-      ranking: "Top destinations: Delft, Amsterdam, Leiden",
-    },
-    {
-      name: "Sweden",
-      flag: "🇸🇪",
-      image: "/sweden.jpg",
-      intake: "Autumn: Aug | Spring: Jan",
-      programs: "50+ universities",
-      ranking: "Top destinations: Lund, Uppsala, KTH",
+      name: "Japan",
+      flag: "🇯🇵",
+      image: "/japan.jpg",
+      intake: "Spring: April | Fall: September/October",
+      programs: "800+ universities including national, public and private",
+      ranking: "Top universities: Tokyo, Kyoto, Osaka, Tohoku, Keio",
     },
   ];
 
@@ -139,10 +110,11 @@ export default function CountriesCarousel() {
                 <div className="group relative h-80 rounded-xl overflow-hidden shadow-lg">
                   {/* Country Image */}
                   <div className="absolute inset-0 bg-gray-200">
-                    <img
+                    <Image
                       src={country.image}
                       alt={country.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                       loading="lazy"
                     />
                   </div>

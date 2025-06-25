@@ -167,7 +167,7 @@ export default function StudentSuccessCarousel(): JSX.Element {
   }
 
   return (
-    <div className="bg-[#F5F4F5] py-16 px-4">
+    <div id="stories" className="bg-[#F5F4F5] py-16 px-4">
       <div className="container mx-auto">
         {/* Header */}
         <motion.div

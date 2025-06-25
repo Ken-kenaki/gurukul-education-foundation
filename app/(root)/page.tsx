@@ -13,18 +13,20 @@ import FindUsSection from "@/Components/FindUs";
 
 export default async function page() {
   return (
-    <main>
-      <HeroSection />
-      <CareerChoicesSection />
-      <AboutSection />
-      <WhyUs />
-      <NewsEventsCarousel />
-      <StatsCounter />
-      <UniversitiesCarousel />
-      <StudentSuccessCarousel />
-      <CountriesCarousel />
-      <ContactSection />
-      <FindUsSection />
+    <main className="overflow-x-hidden">
+      <div className="w-full max-w-[100vw]">
+        <HeroSection />
+        <CareerChoicesSection />
+        <AboutSection />
+        <WhyUs />
+        <NewsEventsCarousel />
+        <StatsCounter />
+        <UniversitiesCarousel />
+        <StudentSuccessCarousel />
+        <CountriesCarousel />
+        <ContactSection />
+        <FindUsSection />
+      </div>
     </main>
   );
 }

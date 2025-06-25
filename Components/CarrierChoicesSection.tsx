@@ -7,6 +7,7 @@ import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import Link from "next/link";
 
 interface CareerOption {
   title: string;
@@ -188,7 +189,9 @@ export default function CareerChoicesSection() {
             type="button"
             className="group flex items-center justify-center space-x-2 bg-[#C73D43] text-[#F5F4F5] px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold hover:bg-[#2C3C81] hover:shadow-lg hover:scale-105 transition-all duration-300 shadow-md mx-auto"
           >
-            <span>EXPLORE ALL CAREER OPTIONS</span>
+            <Link href="/services">
+              <span>EXPLORE ALL CAREER OPTIONS</span>
+            </Link>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 group-hover:translate-x-1 transition-transform"

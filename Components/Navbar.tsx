@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Menu, X, ChevronDown, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 interface Destination {
   name: string;
@@ -251,8 +252,13 @@ export default function Navbar() {
                 className="text-2xl md:text-3xl font-bold"
                 aria-label="Home"
               >
-                <span className="text-[#2C3C81]">Gurukul</span>
-                <span className="text-[#C73D43]">Education</span>
+                <Image
+                  alt="Gurukul education"
+                  width={82} // Default width (for mobile)
+                  height={82} // Default height (for mobile)
+                  className="w-16 md:w-20 lg:w-[82px]" // Responsive width classes
+                  src="/logo.png"
+                />
               </Link>
             </motion.div>
 
@@ -587,22 +593,33 @@ export default function Navbar() {
                     <div className="space-y-4">
                       {/* Study Destinations Mobile Dropdown */}
                       <div className="border-b pb-2">
-                        <button
-                          className="flex items-center justify-between w-full py-2 text-gray-700 hover:text-[#2C3C81] font-medium transition-colors"
-                          onClick={() => toggleMobileDropdown("destinations")}
-                          aria-label="Toggle study destinations"
-                        >
-                          <span>STUDY DESTINATIONS</span>
-                          <motion.div
-                            animate={{
-                              rotate:
-                                mobileDropdown === "destinations" ? 180 : 0,
-                            }}
-                            transition={{ duration: 0.2 }}
+                        <div className="flex items-center justify-between w-full">
+                          <Link
+                            href="/countries"
+                            className="py-2 text-gray-700 hover:text-[#2C3C81] font-medium transition-colors"
+                            onClick={() => setIsOpen(false)}
                           >
-                            <ChevronDown className="w-4 h-4" />
-                          </motion.div>
-                        </button>
+                            STUDY DESTINATIONS
+                          </Link>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleMobileDropdown("destinations");
+                            }}
+                            aria-label="Toggle destinations dropdown"
+                            className="p-2"
+                          >
+                            <motion.div
+                              animate={{
+                                rotate:
+                                  mobileDropdown === "destinations" ? 180 : 0,
+                              }}
+                              transition={{ duration: 0.2 }}
+                            >
+                              <ChevronDown className="w-4 h-4" />
+                            </motion.div>
+                          </button>
+                        </div>
                         <AnimatePresence>
                           {mobileDropdown === "destinations" && (
                             <motion.div
@@ -644,21 +661,32 @@ export default function Navbar() {
 
                       {/* Test Preparations Mobile Dropdown */}
                       <div className="border-b pb-2">
-                        <button
-                          className="flex items-center justify-between w-full py-2 text-gray-700 hover:text-[#2C3C81] font-medium transition-colors"
-                          onClick={() => toggleMobileDropdown("testprep")}
-                          aria-label="Toggle test preparations"
-                        >
-                          <span>TEST PREPARATIONS</span>
-                          <motion.div
-                            animate={{
-                              rotate: mobileDropdown === "testprep" ? 180 : 0,
-                            }}
-                            transition={{ duration: 0.2 }}
+                        <div className="flex items-center justify-between w-full">
+                          <Link
+                            href="/test-preparations"
+                            className="py-2 text-gray-700 hover:text-[#2C3C81] font-medium transition-colors"
+                            onClick={() => setIsOpen(false)}
                           >
-                            <ChevronDown className="w-4 h-4" />
-                          </motion.div>
-                        </button>
+                            TEST PREPARATIONS
+                          </Link>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleMobileDropdown("testprep");
+                            }}
+                            aria-label="Toggle test preparations dropdown"
+                            className="p-2"
+                          >
+                            <motion.div
+                              animate={{
+                                rotate: mobileDropdown === "testprep" ? 180 : 0,
+                              }}
+                              transition={{ duration: 0.2 }}
+                            >
+                              <ChevronDown className="w-4 h-4" />
+                            </motion.div>
+                          </button>
+                        </div>
                         <AnimatePresence>
                           {mobileDropdown === "testprep" && (
                             <motion.div
@@ -698,21 +726,32 @@ export default function Navbar() {
 
                       {/* Services Mobile Dropdown */}
                       <div className="border-b pb-2">
-                        <button
-                          className="flex items-center justify-between w-full py-2 text-gray-700 hover:text-[#2C3C81] font-medium transition-colors"
-                          onClick={() => toggleMobileDropdown("services")}
-                          aria-label="Toggle services"
-                        >
-                          <span>SERVICES</span>
-                          <motion.div
-                            animate={{
-                              rotate: mobileDropdown === "services" ? 180 : 0,
-                            }}
-                            transition={{ duration: 0.2 }}
+                        <div className="flex items-center justify-between w-full">
+                          <Link
+                            href="/services"
+                            className="py-2 text-gray-700 hover:text-[#2C3C81] font-medium transition-colors"
+                            onClick={() => setIsOpen(false)}
                           >
-                            <ChevronDown className="w-4 h-4" />
-                          </motion.div>
-                        </button>
+                            SERVICES
+                          </Link>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleMobileDropdown("services");
+                            }}
+                            aria-label="Toggle services dropdown"
+                            className="p-2"
+                          >
+                            <motion.div
+                              animate={{
+                                rotate: mobileDropdown === "services" ? 180 : 0,
+                              }}
+                              transition={{ duration: 0.2 }}
+                            >
+                              <ChevronDown className="w-4 h-4" />
+                            </motion.div>
+                          </button>
+                        </div>
                         <AnimatePresence>
                           {mobileDropdown === "services" && (
                             <motion.div
