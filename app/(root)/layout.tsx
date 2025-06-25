@@ -5,8 +5,11 @@ import Navbar from "@/Components/Navbar";
 import Footer from "@/Components/Footer";
 
 export const metadata: Metadata = {
+  icons: {
+    icon: "/favicon.ico",
+  },
   title: {
-    default: "Gurukul Education | Study Abroad Consultants",
+    default: "Gurukul Education",
     template: "%s | Gurukul Education",
   },
   description:
