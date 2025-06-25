@@ -12,18 +12,36 @@ export default function Admission() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [error, setError] = useState("");
   const statsRef = useRef(null);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError("");
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/forms", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to submit form");
+      }
+
+      const data = await response.json();
       setShowSuccess(true);
       setForm({
         name: "",
@@ -32,15 +50,21 @@ export default function Admission() {
         message: "",
       });
       setTimeout(() => setShowSuccess(false), 3000);
+    } catch (err) {
+      console.error("Form submission error:", err);
+      setError(
+        err instanceof Error ? err.message : "An unknown error occurred"
+      );
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   // Animation setup
   useEffect(() => {
     if (statsRef.current) {
       const children = statsRef.current.children;
-      Array.from(children).forEach((child, index) => {
+      Array.from(children).forEach((child: HTMLElement, index: number) => {
         child.style.opacity = "0";
         child.style.transform = "translateY(30px)";
 
@@ -72,6 +96,16 @@ export default function Admission() {
           style={{ backgroundColor: "#2C3C81" }}
         >
           Consultation Request Successful! We'll contact you soon.
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div
+          className="fixed top-4 right-4 text-white px-6 py-3 rounded-lg shadow-lg z-50"
+          style={{ backgroundColor: "#C73D43" }}
+        >
+          {error}
         </div>
       )}
 
@@ -135,7 +169,8 @@ export default function Admission() {
         </div>
 
         {/* Consultation Form */}
-        <div
+        <form
+          onSubmit={handleSubmit}
           className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto"
           style={{ border: "2px solid #B2ACCE" }}
         >
@@ -154,20 +189,22 @@ export default function Admission() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label
+                    htmlFor="name"
                     className="block text-sm font-medium mb-2"
                     style={{ color: "#2C3C81" }}
                   >
                     Full Name
                   </label>
                   <input
+                    id="name"
                     name="name"
+                    type="text"
                     value={form.name}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 border rounded-lg transition focus:outline-none focus:ring-2"
                     style={{
                       borderColor: "#B2ACCE",
-                      focusRingColor: "#C73D43",
                     }}
                     onFocus={(e) => (e.target.style.borderColor = "#C73D43")}
                     onBlur={(e) => (e.target.style.borderColor = "#B2ACCE")}
@@ -176,12 +213,14 @@ export default function Admission() {
 
                 <div>
                   <label
+                    htmlFor="email"
                     className="block text-sm font-medium mb-2"
                     style={{ color: "#2C3C81" }}
                   >
                     Email
                   </label>
                   <input
+                    id="email"
                     name="email"
                     type="email"
                     value={form.email}
@@ -199,12 +238,14 @@ export default function Admission() {
 
               <div>
                 <label
+                  htmlFor="phone"
                   className="block text-sm font-medium mb-2"
                   style={{ color: "#2C3C81" }}
                 >
                   Phone Number
                 </label>
                 <input
+                  id="phone"
                   name="phone"
                   type="tel"
                   value={form.phone}
@@ -221,12 +262,14 @@ export default function Admission() {
 
               <div>
                 <label
+                  htmlFor="message"
                   className="block text-sm font-medium mb-2"
                   style={{ color: "#2C3C81" }}
                 >
                   Tell us about your study abroad goals (Optional)
                 </label>
                 <textarea
+                  id="message"
                   name="message"
                   rows={4}
                   value={form.message}
@@ -242,18 +285,17 @@ export default function Admission() {
               </div>
 
               <button
-                onClick={handleSubmit}
+                type="submit"
                 disabled={isSubmitting}
                 className="w-full text-white py-4 px-6 rounded-lg font-bold text-lg transition transform hover:scale-[1.02] shadow-md disabled:opacity-70"
                 style={{
                   backgroundColor: "#C73D43",
-                  ":hover": { backgroundColor: "#B12B31" },
                 }}
                 onMouseEnter={(e) =>
-                  (e.target.style.backgroundColor = "#B12B31")
+                  (e.currentTarget.style.backgroundColor = "#B12B31")
                 }
                 onMouseLeave={(e) =>
-                  (e.target.style.backgroundColor = "#C73D43")
+                  (e.currentTarget.style.backgroundColor = "#C73D43")
                 }
               >
                 {isSubmitting ? (
@@ -298,7 +340,7 @@ export default function Admission() {
               </span>
             </p>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

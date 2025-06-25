@@ -14,6 +14,27 @@ import {
 import { motion } from "framer-motion";
 import Link from "next/link";
 
+// Type definitions
+type SyllabusItem = {
+  title: string;
+  items: string[];
+};
+
+type TestPreparation = {
+  id: string;
+  name: string;
+  fullName: string;
+  description: string;
+  longDescription: string;
+  duration: string;
+  students: string;
+  rating: number;
+  features: string[];
+  syllabus: SyllabusItem[];
+  image: string;
+  color: string;
+};
+
 const testPreparations = {
   ielts: {
     id: "ielts",
@@ -250,17 +271,35 @@ const testPreparations = {
       "https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=800&h=500&fit=crop",
     color: "from-purple-500 to-indigo-500",
   },
-};
+} as const;
 
-export default function TestPreparationDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const test = testPreparations[params.id as keyof typeof testPreparations];
+type TestId = keyof typeof testPreparations;
+
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default function TestPreparationDetailPage({ params }: PageProps) {
+  const test = testPreparations[params.id as TestId];
 
   if (!test) {
-    return <div>Test preparation not found</div>;
+    return (
+      <div className="min-h-screen pt-32 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-[#2C3C81] mb-4">
+            Test preparation not found
+          </h1>
+          <Link
+            href="/test-preparations"
+            className="text-[#C73D43] hover:underline"
+          >
+            Back to Test Preparations
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -276,7 +315,6 @@ export default function TestPreparationDetailPage({
           </Link>
         </div>
 
-        {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -312,11 +350,8 @@ export default function TestPreparationDetailPage({
           </div>
         </motion.div>
 
-        {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column */}
           <div className="lg:col-span-2">
-            {/* Overview */}
             <motion.section
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -353,7 +388,6 @@ export default function TestPreparationDetailPage({
               </div>
             </motion.section>
 
-            {/* Features */}
             <motion.section
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -379,7 +413,6 @@ export default function TestPreparationDetailPage({
               </div>
             </motion.section>
 
-            {/* Syllabus */}
             <motion.section
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -414,9 +447,7 @@ export default function TestPreparationDetailPage({
             </motion.section>
           </div>
 
-          {/* Right Column */}
           <div>
-            {/* Quick Info */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

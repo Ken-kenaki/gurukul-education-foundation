@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/server/appwrite";
 import { cookies } from "next/headers";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const { email, password } = await request.json();
+    const { email, password } = (await request.json()) as {
+      email?: string;
+      password?: string;
+    };
 
     if (!email || !password) {
       return NextResponse.json(
@@ -19,7 +22,7 @@ export async function POST(request: NextRequest) {
     const session = await account.createEmailPasswordSession(email, password);
 
     // Set session cookie
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
     cookieStore.set("my-custom-session", session.secret, {
       path: "/",
       httpOnly: true,
@@ -29,11 +32,12 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Login error:", error);
-    return NextResponse.json(
-      { error: error.message || "Login failed. Please check your credentials." },
-      { status: 401 }
-    );
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Login failed. Please check your credentials.";
+    return NextResponse.json({ error: errorMessage }, { status: 401 });
   }
 }

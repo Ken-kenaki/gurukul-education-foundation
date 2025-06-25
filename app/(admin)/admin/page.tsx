@@ -21,6 +21,13 @@ interface Stats {
   universities: number;
 }
 
+interface StatItem {
+  name: string;
+  value: string;
+  icon: React.ComponentType<{ className?: string }>;
+  change: string;
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats>({
     stories: 0,
@@ -39,9 +46,16 @@ export default function AdminDashboard() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch all stats in parallel
-      const [storiesRes, galleryRes, formsRes, newsRes, countriesRes, universitiesRes] = await Promise.all([
+      const [
+        storiesRes,
+        galleryRes,
+        formsRes,
+        newsRes,
+        countriesRes,
+        universitiesRes,
+      ] = await Promise.all([
         fetch("/api/stories"),
         fetch("/api/gallery"),
         fetch("/api/forms"),
@@ -50,14 +64,15 @@ export default function AdminDashboard() {
         fetch("/api/universities"),
       ]);
 
-      const [stories, gallery, forms, newsEvents, countries, universities] = await Promise.all([
-        storiesRes.json(),
-        galleryRes.json(),
-        formsRes.json(),
-        newsRes.json(),
-        countriesRes.json(),
-        universitiesRes.json(),
-      ]);
+      const [stories, gallery, forms, newsEvents, countries, universities] =
+        await Promise.all([
+          storiesRes.json(),
+          galleryRes.json(),
+          formsRes.json(),
+          newsRes.json(),
+          countriesRes.json(),
+          universitiesRes.json(),
+        ]);
 
       setStats({
         stories: stories.total || stories.documents?.length || 0,
@@ -74,13 +89,43 @@ export default function AdminDashboard() {
     }
   };
 
-  const statsData = [
-    { name: "Total Stories", value: stats.stories.toString(), icon: Users, change: "+12%" },
-    { name: "Gallery Items", value: stats.gallery.toString(), icon: Image, change: "+8%" },
-    { name: "Form Submissions", value: stats.forms.toString(), icon: FileText, change: "+23%" },
-    { name: "News & Events", value: stats.newsEvents.toString(), icon: Calendar, change: "+5%" },
-    { name: "Countries", value: stats.countries.toString(), icon: Globe, change: "+2%" },
-    { name: "Universities", value: stats.universities.toString(), icon: GraduationCap, change: "+15%" },
+  const statsData: StatItem[] = [
+    {
+      name: "Total Stories",
+      value: stats.stories.toString(),
+      icon: Users,
+      change: "+12%",
+    },
+    {
+      name: "Gallery Items",
+      value: stats.gallery.toString(),
+      icon: Image,
+      change: "+8%",
+    },
+    {
+      name: "Form Submissions",
+      value: stats.forms.toString(),
+      icon: FileText,
+      change: "+23%",
+    },
+    {
+      name: "News & Events",
+      value: stats.newsEvents.toString(),
+      icon: Calendar,
+      change: "+5%",
+    },
+    {
+      name: "Countries",
+      value: stats.countries.toString(),
+      icon: Globe,
+      change: "+2%",
+    },
+    {
+      name: "Universities",
+      value: stats.universities.toString(),
+      icon: GraduationCap,
+      change: "+15%",
+    },
   ];
 
   if (loading) {
@@ -96,7 +141,9 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="bg-white rounded-lg shadow p-6">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-2">Welcome back! Here's what's happening with your admin panel.</p>
+        <p className="text-gray-600 mt-2">
+          Welcome back! Here&apos;s what&apos;s happening with your admin panel.
+        </p>
       </div>
 
       {/* Stats Grid */}

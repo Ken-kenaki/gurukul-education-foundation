@@ -4,13 +4,23 @@ import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
+
+interface Country {
+  name: string;
+  flag: string;
+  image: string;
+  intake: string;
+  programs: string;
+  ranking: string;
+}
 
 export default function CountriesCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const countries = [
+  const countries: Country[] = [
     {
       name: "United States",
       flag: "🇺🇸",
@@ -119,11 +129,13 @@ export default function CountriesCarousel() {
             }}
             navigation
             autoplay={{ delay: 5000, pauseOnMouseEnter: true }}
-            onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+            onSlideChange={(swiper: SwiperType) =>
+              setActiveIndex(swiper.activeIndex)
+            }
             className="!pb-12"
           >
             {countries.map((country, index) => (
-              <SwiperSlide key={index}>
+              <SwiperSlide key={country.name}>
                 <div className="group relative h-80 rounded-xl overflow-hidden shadow-lg">
                   {/* Country Image */}
                   <div className="absolute inset-0 bg-gray-200">
@@ -131,6 +143,7 @@ export default function CountriesCarousel() {
                       src={country.image}
                       alt={country.name}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   </div>
 
@@ -166,7 +179,10 @@ export default function CountriesCarousel() {
                           {country.ranking}
                         </div>
                       </div>
-                      <button className="mt-4 group flex items-center text-[#B2ACCE] hover:text-white transition-colors">
+                      <button
+                        type="button"
+                        className="mt-4 group flex items-center text-[#B2ACCE] hover:text-white transition-colors"
+                      >
                         <span>Explore {country.name}</span>
                         <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </button>
@@ -180,7 +196,10 @@ export default function CountriesCarousel() {
 
         {/* View All Button */}
         <div className="text-center mt-12">
-          <button className="group inline-flex items-center bg-[#C73D43] text-[#F5F4F5] px-8 py-3 rounded-lg font-semibold hover:bg-[#2C3C81] transition-colors">
+          <button
+            type="button"
+            className="group inline-flex items-center bg-[#C73D43] text-[#F5F4F5] px-8 py-3 rounded-lg font-semibold hover:bg-[#2C3C81] transition-colors"
+          >
             View All Countries
             <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>

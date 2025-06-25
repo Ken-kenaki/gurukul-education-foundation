@@ -3,10 +3,23 @@ import { createAdminClient } from "@/lib/server/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { ID } from "node-appwrite";
 
+interface StoryDocument {
+  $id: string;
+  name: string;
+  program: string;
+  university: string;
+  content: string;
+  rating: number;
+  status: string;
+  imageId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
-) {
+): Promise<NextResponse> {
   try {
     const { databases } = await createAdminClient();
     const story = await databases.getDocument(
@@ -15,9 +28,11 @@ export async function GET(
       params.id
     );
     return NextResponse.json(story);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Story not found", details: error.message },
+      { error: "Story not found", details: errorMessage },
       { status: 404 }
     );
   }
@@ -26,13 +41,13 @@ export async function GET(
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
-) {
+): Promise<NextResponse> {
   try {
     const { databases, storage } = await createAdminClient();
     const formData = await request.formData();
 
     // Get existing document
-    const existingDoc = await databases.getDocument(
+    const existingDoc = await databases.getDocument<StoryDocument>(
       appwriteConfig.databaseId,
       appwriteConfig.collections.stories,
       params.id
@@ -46,7 +61,7 @@ export async function PUT(
     const status = formData.get("status") as string;
     const file = formData.get("file") as File | null;
 
-    const updateData: any = {
+    const updateData: Partial<StoryDocument> = {
       name: name || existingDoc.name,
       program: program || existingDoc.program,
       university: university || existingDoc.university,
@@ -84,10 +99,12 @@ export async function PUT(
     );
 
     return NextResponse.json(story);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Update Story Error:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to update story", details: error.message },
+      { error: "Failed to update story", details: errorMessage },
       { status: 500 }
     );
   }
@@ -96,12 +113,12 @@ export async function PUT(
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
-) {
+): Promise<NextResponse> {
   try {
     const { databases, storage } = await createAdminClient();
 
     // Get document first to delete associated file
-    const document = await databases.getDocument(
+    const document = await databases.getDocument<StoryDocument>(
       appwriteConfig.databaseId,
       appwriteConfig.collections.stories,
       params.id
@@ -115,7 +132,7 @@ export async function DELETE(
           document.imageId
         );
       } catch (error) {
-        console.log("File not found or already deleted");
+        console.log("File not found or already deleted", error);
       }
     }
 
@@ -127,9 +144,11 @@ export async function DELETE(
     );
 
     return NextResponse.json({ message: "Story deleted successfully" });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to delete story", details: error.message },
+      { error: "Failed to delete story", details: errorMessage },
       { status: 500 }
     );
   }

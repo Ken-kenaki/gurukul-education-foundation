@@ -4,11 +4,20 @@ import { ArrowRight } from "lucide-react";
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import Image from "next/image";
+import Link from "next/link";
+
+interface FeatureItem {
+  title: string;
+  description: string;
+  image: string;
+  imagePosition: "left" | "right";
+  buttonText: string;
+}
 
 export default function WhyUs() {
-  const sectionRef = useRef(null);
-  const imageRefs = useRef([]);
-  const contentRefs = useRef([]);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -37,7 +46,7 @@ export default function WhyUs() {
     return () => observer.disconnect();
   }, []);
 
-  const features = [
+  const features: FeatureItem[] = [
     {
       title: "Decades of Expertise",
       description:
@@ -94,6 +103,7 @@ export default function WhyUs() {
                 fill
                 className="object-cover"
                 quality={100}
+                priority={index === 0} // Only prioritize first image
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
             </div>
@@ -111,10 +121,19 @@ export default function WhyUs() {
               <p className="text-[#2C3C81]/80 text-lg leading-relaxed">
                 {feature.description}
               </p>
-              <button className="group flex items-center space-x-2 bg-[#C73D43] text-[#F5F4F5] px-6 py-3 rounded-lg font-semibold hover:bg-[#2C3C81] hover:shadow-lg transition-all duration-300 shadow-md">
+              <Link
+                href={
+                  index === 0
+                    ? "/team"
+                    : index === 1
+                    ? "/success-stories"
+                    : "/services"
+                }
+                className="group inline-flex items-center bg-[#C73D43] text-[#F5F4F5] px-6 py-3 rounded-lg font-semibold hover:bg-[#2C3C81] hover:shadow-lg transition-all duration-300 shadow-md"
+              >
                 <span>{feature.buttonText}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
           </div>
         ))}

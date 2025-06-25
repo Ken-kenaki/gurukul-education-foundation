@@ -11,7 +11,7 @@ import "swiper/css/pagination";
 interface CareerOption {
   title: string;
   description: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
   countries: string[];
 }
 
@@ -29,6 +29,7 @@ export default function CareerChoicesSection() {
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
         >
           <path
             strokeLinecap="round"
@@ -50,6 +51,7 @@ export default function CareerChoicesSection() {
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
         >
           <path
             strokeLinecap="round"
@@ -71,6 +73,7 @@ export default function CareerChoicesSection() {
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
         >
           <path
             strokeLinecap="round"
@@ -92,6 +95,7 @@ export default function CareerChoicesSection() {
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
         >
           <path
             strokeLinecap="round"
@@ -110,7 +114,7 @@ export default function CareerChoicesSection() {
       <div className="container mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-[#2C3C81] mb-4">
-            Find What's Right For You
+            Find What&apos;s Right For You
           </h2>
           <p className="text-[#2C3C81]/80 max-w-2xl mx-auto text-lg">
             Explore diverse career paths and find the perfect program to match
@@ -120,7 +124,9 @@ export default function CareerChoicesSection() {
 
         <div className="relative">
           <Swiper
-            onSwiper={(swiper) => (swiperRef.current = swiper)}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+            }}
             modules={[Navigation, Pagination]}
             spaceBetween={20}
             slidesPerView={1}
@@ -178,7 +184,10 @@ export default function CareerChoicesSection() {
         </div>
 
         <div className="text-center mt-12">
-          <button className="group flex items-center justify-center space-x-2 bg-[#C73D43] text-[#F5F4F5] px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold hover:bg-[#2C3C81] hover:shadow-lg hover:scale-105 transition-all duration-300 shadow-md mx-auto">
+          <button
+            type="button"
+            className="group flex items-center justify-center space-x-2 bg-[#C73D43] text-[#F5F4F5] px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold hover:bg-[#2C3C81] hover:shadow-lg hover:scale-105 transition-all duration-300 shadow-md mx-auto"
+          >
             <span>EXPLORE ALL CAREER OPTIONS</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"

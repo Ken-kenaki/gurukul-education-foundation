@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Search, Star, User } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Story } from "@/lib/appwrite/database";
-import { getImageUrl } from "@/utils/appwrite"; // import your helper
+import { getImageUrl } from "@/utils/appwrite";
 
 export default function StoriesPage() {
   const [stories, setStories] = useState<Story[]>([]);
@@ -36,8 +37,8 @@ export default function StoriesPage() {
       if (!response.ok) throw new Error("Failed to fetch stories");
       const data = await response.json();
       setStories(data.documents || []);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch stories");
     } finally {
       setLoading(false);
     }
@@ -80,8 +81,8 @@ export default function StoriesPage() {
 
       await fetchStories();
       resetForm();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save story");
     }
   };
 
@@ -92,8 +93,8 @@ export default function StoriesPage() {
       const response = await fetch(`/api/stories/${id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Failed to delete story");
       await fetchStories();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete story");
     }
   };
 
@@ -127,7 +128,6 @@ export default function StoriesPage() {
     setPreviewUrl(null);
   };
 
-  // Filter stories based on search and status
   const filteredStories = stories.filter((story) => {
     const matchesSearch =
       story.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -140,8 +140,7 @@ export default function StoriesPage() {
     return matchesSearch && matchesStatus;
   });
 
-  // Use your utility to generate image URLs from imageId and the stories bucket ID
-  const STORIES_BUCKET = process.env.NEXT_PUBLIC_APPWRITE_STORIES_BUCKET!;
+  const STORIES_BUCKET = process.env.NEXT_PUBLIC_APPWRITE_STORIES_BUCKET || "";
 
   const getStoryImageUrl = (imageId?: string) => {
     if (!imageId) return null;
@@ -161,17 +160,17 @@ export default function StoriesPage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="space-y-6"
+      className="space-y-6 p-4 sm:p-6"
     >
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
           Student Success Stories
         </h1>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsModalOpen(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2 transition-colors"
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2 transition-colors w-full sm:w-auto justify-center"
         >
           <Plus size={18} />
           Add New Story
@@ -191,22 +190,23 @@ export default function StoriesPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            size={20}
-          />
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="text-gray-400" size={20} />
+          </div>
           <input
             type="text"
             placeholder="Search stories..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            aria-label="Search stories"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          aria-label="Filter by status"
         >
           <option value="all">All Status</option>
           <option value="pending">Pending</option>
@@ -216,88 +216,115 @@ export default function StoriesPage() {
       </div>
 
       {/* Stories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredStories.map((story, index) => (
-          <motion.div
-            key={story.$id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            whileHover={{ y: -5, scale: 1.02 }}
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300"
-          >
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 rounded-full overflow-hidden mr-3 bg-gray-200 flex items-center justify-center">
-                {story.imageId ? (
-                  <img
-                    src={getStoryImageUrl(story.imageId) || ""}
-                    alt={story.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) =>
-                      ((e.target as HTMLImageElement).src = "/placeholder.jpg")
-                    }
+      {filteredStories.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-lg shadow">
+          <User className="mx-auto h-12 w-12 text-gray-400" />
+          <h3 className="mt-2 text-lg font-medium text-gray-900">
+            No stories found
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">
+            {searchTerm || statusFilter !== "all"
+              ? "Try adjusting your search or filter"
+              : "Get started by adding a new story"}
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {filteredStories.map((story, index) => (
+            <motion.div
+              key={story.$id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ y: -5, scale: 1.02 }}
+              className="bg-white rounded-lg shadow-md p-4 sm:p-6 hover:shadow-lg transition-all duration-300"
+            >
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 rounded-full overflow-hidden mr-3 bg-gray-200 flex items-center justify-center relative">
+                  {story.imageId ? (
+                    <Image
+                      src={getStoryImageUrl(story.imageId) || ""}
+                      alt={story.name}
+                      fill
+                      className="object-cover"
+                      onError={() => "/placeholder.jpg"}
+                    />
+                  ) : (
+                    <User className="w-6 h-6 text-gray-400" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-gray-900 truncate">
+                    {story.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 truncate">
+                    {story.program}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {story.university}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mb-3 flex">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`w-4 h-4 ${
+                      i < story.rating
+                        ? "text-yellow-400 fill-current"
+                        : "text-gray-300"
+                    }`}
+                    aria-hidden="true"
                   />
-                ) : (
-                  <User className="w-6 h-6 text-gray-400" />
-                )}
+                ))}
+                <span className="sr-only">
+                  {story.rating} out of 5 stars rating
+                </span>
               </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-gray-900">{story.name}</h3>
-                <p className="text-sm text-gray-600">{story.program}</p>
-                <p className="text-xs text-gray-500">{story.university}</p>
-              </div>
-            </div>
 
-            <div className="mb-3 flex">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-4 h-4 ${
-                    i < story.rating
-                      ? "text-yellow-400 fill-current"
-                      : "text-gray-300"
+              <p className="text-gray-700 mb-4 line-clamp-3">
+                "{story.content}"
+              </p>
+
+              <div className="flex justify-between items-center">
+                <span
+                  className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    story.status === "approved"
+                      ? "bg-green-100 text-green-800"
+                      : story.status === "rejected"
+                      ? "bg-red-100 text-red-800"
+                      : "bg-yellow-100 text-yellow-800"
                   }`}
-                />
-              ))}
-            </div>
-
-            <p className="text-gray-700 mb-4 line-clamp-3">"{story.content}"</p>
-
-            <div className="flex justify-between items-center">
-              <span
-                className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                  story.status === "approved"
-                    ? "bg-green-100 text-green-800"
-                    : story.status === "rejected"
-                    ? "bg-red-100 text-red-800"
-                    : "bg-yellow-100 text-yellow-800"
-                }`}
-              >
-                {story.status}
-              </span>
-
-              <div className="flex space-x-2">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => startEditing(story)}
-                  className="text-green-600 hover:text-green-900 transition-colors"
                 >
-                  <Edit size={16} />
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => handleDelete(story.$id!)}
-                  className="text-red-600 hover:text-red-900 transition-colors"
-                >
-                  <Trash2 size={16} />
-                </motion.button>
+                  {story.status}
+                </span>
+
+                <div className="flex space-x-2">
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => startEditing(story)}
+                    className="text-green-600 hover:text-green-900 transition-colors"
+                    aria-label={`Edit ${story.name}'s story`}
+                  >
+                    <Edit size={16} />
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleDelete(story.$id!)}
+                    className="text-red-600 hover:text-red-900 transition-colors"
+                    aria-label={`Delete ${story.name}'s story`}
+                  >
+                    <Trash2 size={16} />
+                  </motion.button>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* Modal */}
       {isModalOpen && (
@@ -312,7 +339,7 @@ export default function StoriesPage() {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-xl font-bold mb-4">
@@ -320,10 +347,14 @@ export default function StoriesPage() {
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Student Name
                 </label>
                 <input
+                  id="name"
                   type="text"
                   value={formData.name}
                   onChange={(e) =>
@@ -335,10 +366,14 @@ export default function StoriesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="program"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Program
                 </label>
                 <input
+                  id="program"
                   type="text"
                   value={formData.program}
                   onChange={(e) =>
@@ -351,10 +386,14 @@ export default function StoriesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="university"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   University
                 </label>
                 <input
+                  id="university"
                   type="text"
                   value={formData.university}
                   onChange={(e) =>
@@ -367,31 +406,41 @@ export default function StoriesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="photo"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Student Photo (Optional)
                 </label>
                 <input
+                  id="photo"
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
                   className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  aria-label="Upload student photo"
                 />
                 {previewUrl && (
-                  <div className="mt-2">
-                    <img
+                  <div className="mt-2 relative w-20 h-20">
+                    <Image
                       src={previewUrl}
                       alt="Preview"
-                      className="h-20 w-20 object-cover rounded-full border border-gray-200"
+                      fill
+                      className="object-cover rounded-full border border-gray-200"
                     />
                   </div>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="content"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Success Story
                 </label>
                 <textarea
+                  id="content"
                   value={formData.content}
                   onChange={(e) =>
                     setFormData({ ...formData, content: e.target.value })
@@ -404,10 +453,14 @@ export default function StoriesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="rating"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Rating
                 </label>
                 <select
+                  id="rating"
                   value={formData.rating}
                   onChange={(e) =>
                     setFormData({
@@ -426,10 +479,14 @@ export default function StoriesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="status"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Status
                 </label>
                 <select
+                  id="status"
                   value={formData.status}
                   onChange={(e) =>
                     setFormData({
@@ -448,7 +505,7 @@ export default function StoriesPage() {
                 </select>
               </div>
 
-              <div className="flex justify-end space-x-3">
+              <div className="flex flex-col sm:flex-row justify-end gap-3">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

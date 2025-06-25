@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Search, Upload } from "lucide-react";
+import { Plus, Edit, Trash2, Search } from "lucide-react";
 import { Country } from "@/lib/appwrite/database";
 
 export default function CountriesPage() {
@@ -38,12 +38,14 @@ export default function CountriesPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const url = editingCountry ? `/api/countries/${editingCountry.$id}` : "/api/countries";
+      const url = editingCountry
+        ? `/api/countries/${editingCountry.$id}`
+        : "/api/countries";
       const method = editingCountry ? "PUT" : "POST";
-      
+
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
@@ -51,7 +53,7 @@ export default function CountriesPage() {
       });
 
       if (!response.ok) throw new Error("Failed to save country");
-      
+
       await fetchCountries();
       resetForm();
     } catch (err: any) {
@@ -61,9 +63,11 @@ export default function CountriesPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this country?")) return;
-    
+
     try {
-      const response = await fetch(`/api/countries/${id}`, { method: "DELETE" });
+      const response = await fetch(`/api/countries/${id}`, {
+        method: "DELETE",
+      });
       if (!response.ok) throw new Error("Failed to delete country");
       await fetchCountries();
     } catch (err: any) {
@@ -97,7 +101,7 @@ export default function CountriesPage() {
     });
   };
 
-  const filteredCountries = countries.filter(country =>
+  const filteredCountries = countries.filter((country) =>
     country.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -110,9 +114,11 @@ export default function CountriesPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Countries Management</h1>
+    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          Countries Management
+        </h1>
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
@@ -129,20 +135,26 @@ export default function CountriesPage() {
       )}
 
       {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+      <div className="relative max-w-md">
+        <Search
+          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+          size={20}
+        />
         <input
           type="text"
           placeholder="Search countries..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full max-w-md"
+          className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full"
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCountries.map((country) => (
-          <div key={country.$id} className="bg-white rounded-lg shadow-md p-6">
+          <div
+            key={country.$id}
+            className="bg-white rounded-lg shadow p-4 sm:p-6"
+          >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
                 <span className="text-2xl mr-2">{country.flag}</span>
@@ -163,12 +175,22 @@ export default function CountriesPage() {
                 </button>
               </div>
             </div>
-            <div className="space-y-2 text-sm">
-              <p><span className="font-medium">Intake:</span> {country.intake}</p>
-              <p><span className="font-medium">Programs:</span> {country.programs}</p>
-              <p><span className="font-medium">Ranking:</span> {country.ranking}</p>
+            <div className="space-y-1 text-sm">
+              <p>
+                <span className="font-medium">Intake:</span> {country.intake}
+              </p>
+              <p>
+                <span className="font-medium">Programs:</span>{" "}
+                {country.programs}
+              </p>
+              <p>
+                <span className="font-medium">Ranking:</span> {country.ranking}
+              </p>
               {country.description && (
-                <p><span className="font-medium">Description:</span> {country.description}</p>
+                <p>
+                  <span className="font-medium">Description:</span>{" "}
+                  {country.description}
+                </p>
               )}
             </div>
           </div>
@@ -178,70 +200,55 @@ export default function CountriesPage() {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">
               {editingCountry ? "Edit Country" : "Add New Country"}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {[
+                { label: "Country Name", key: "name", placeholder: "Nepal" },
+                { label: "Flag Emoji", key: "flag", placeholder: "🇳🇵" },
+                {
+                  label: "Intake Information",
+                  key: "intake",
+                  placeholder: "Fall: Sep | Spring: Jan",
+                },
+                {
+                  label: "Programs",
+                  key: "programs",
+                  placeholder: "4,000+ institutions",
+                },
+                {
+                  label: "Ranking/Top Destinations",
+                  key: "ranking",
+                  placeholder: "Top destinations: MIT",
+                },
+              ].map(({ label, key, placeholder }) => (
+                <div key={key}>
+                  <label className="block text-sm font-medium text-gray-700">
+                    {label}
+                  </label>
+                  <input
+                    type="text"
+                    value={formData[key as keyof typeof formData]}
+                    onChange={(e) =>
+                      setFormData({ ...formData, [key]: e.target.value })
+                    }
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    placeholder={placeholder}
+                    required
+                  />
+                </div>
+              ))}
               <div>
-                <label className="block text-sm font-medium text-gray-700">Country Name</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Flag Emoji</label>
-                <input
-                  type="text"
-                  value={formData.flag}
-                  onChange={(e) => setFormData({ ...formData, flag: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="🇺🇸"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Intake Information</label>
-                <input
-                  type="text"
-                  value={formData.intake}
-                  onChange={(e) => setFormData({ ...formData, intake: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="Fall: Sep | Spring: Jan"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Programs</label>
-                <input
-                  type="text"
-                  value={formData.programs}
-                  onChange={(e) => setFormData({ ...formData, programs: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="4,000+ institutions"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Ranking/Top Destinations</label>
-                <input
-                  type="text"
-                  value={formData.ranking}
-                  onChange={(e) => setFormData({ ...formData, ranking: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="Top destinations: Harvard, MIT, Stanford"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Description (Optional)</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Description (Optional)
+                </label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   rows={3}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 />

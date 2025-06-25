@@ -64,7 +64,8 @@ export default function GalleryPage() {
     }
   };
 
-  const addTag = () => {
+  const addTag = (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
       setFormData({
         ...formData,
@@ -177,11 +178,13 @@ export default function GalleryPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Gallery Management</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          Gallery Management
+        </h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 w-full sm:w-auto justify-center"
         >
           <Plus size={18} />
           Add New Item
@@ -231,7 +234,7 @@ export default function GalleryPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {galleryItems.map((item) => (
             <div
               key={item.$id}
@@ -296,9 +299,9 @@ export default function GalleryPage() {
 
       {/* Add/Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-auto">
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <h2 className="text-xl font-bold mb-4">
                 {editingId ? "Edit Gallery Item" : "Add New Gallery Item"}
               </h2>
@@ -415,26 +418,22 @@ export default function GalleryPage() {
                     >
                       Tags
                     </label>
-                    <div className="flex">
+                    <form onSubmit={addTag} className="flex">
                       <input
                         id="tags"
                         type="text"
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
-                        onKeyDown={(e) =>
-                          e.key === "Enter" && (e.preventDefault(), addTag())
-                        }
                         className="flex-1 min-w-0 block w-full px-3 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Add tag"
                       />
                       <button
-                        type="button"
-                        onClick={addTag}
+                        type="submit"
                         className="inline-flex items-center px-3 py-2 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 text-gray-500 hover:bg-gray-100"
                       >
                         Add
                       </button>
-                    </div>
+                    </form>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {formData.tags.map((tag) => (
                         <span
@@ -445,7 +444,7 @@ export default function GalleryPage() {
                           <button
                             type="button"
                             onClick={() => removeTag(tag)}
-                            className="ml-1.5 inline-flex text-gray-400 hover:text-gray-500"
+                            className="ml-1.5 inline-flex text-gray-400 hover:text-gray-500 focus:outline-none"
                             aria-label={`Remove tag ${tag}`}
                           >
                             ×
@@ -456,7 +455,7 @@ export default function GalleryPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 flex justify-end space-x-3">
+                <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3">
                   <button
                     type="button"
                     onClick={resetModal}

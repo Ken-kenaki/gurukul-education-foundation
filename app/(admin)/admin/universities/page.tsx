@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Search, Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { appwriteConfig, getImageUrl } from "@/utils/appwrite";
 
 interface University {
@@ -13,7 +14,7 @@ interface University {
   programs: string;
   ranking: string;
   description?: string;
-  imageId?: string; // <-- Use imageId here from backend
+  imageId?: string;
 }
 
 export default function UniversitiesPage() {
@@ -50,8 +51,10 @@ export default function UniversitiesPage() {
       if (!response.ok) throw new Error("Failed to fetch universities");
       const data = await response.json();
       setUniversities(data.documents || []);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch universities"
+      );
     } finally {
       setLoading(false);
     }
@@ -100,8 +103,10 @@ export default function UniversitiesPage() {
 
       await fetchUniversities();
       resetForm();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to save university"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -116,8 +121,10 @@ export default function UniversitiesPage() {
       });
       if (!response.ok) throw new Error("Failed to delete university");
       await fetchUniversities();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to delete university"
+      );
     }
   };
 
@@ -179,17 +186,18 @@ export default function UniversitiesPage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="space-y-6"
+      className="space-y-6 p-4 sm:p-6"
     >
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
           Universities Management
         </h1>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsModalOpen(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2 transition-colors"
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2 transition-colors w-full sm:w-auto justify-center"
+          aria-label="Add new university"
         >
           <Plus size={18} />
           Add New University
@@ -208,96 +216,113 @@ export default function UniversitiesPage() {
 
       {/* Search */}
       <div className="relative">
-        <Search
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-          size={20}
-        />
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Search className="text-gray-400" size={20} />
+        </div>
         <input
           type="text"
           placeholder="Search universities..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full max-w-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+          aria-label="Search universities"
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredUniversities.map((university, index) => (
-          <motion.div
-            key={university.$id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-          >
-            <div className="relative h-48 bg-gray-200">
-              {university.imageId ? (
-                <img
-                  src={getUniversityImageUrl(university.imageId) || ""}
-                  alt={university.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/placeholder.jpg";
-                  }}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <ImageIcon className="w-12 h-12 text-gray-400" />
-                </div>
-              )}
-            </div>
-
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {university.name}
-                  </h3>
-                  <p className="text-sm text-gray-600">{university.country}</p>
-                </div>
-                <div className="flex space-x-2">
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => startEditing(university)}
-                    className="text-green-600 hover:text-green-900 transition-colors"
-                  >
-                    <Edit size={16} />
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => handleDelete(university.$id)}
-                    className="text-red-600 hover:text-red-900 transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </motion.button>
-                </div>
-              </div>
-              <div className="space-y-2 text-sm">
-                <p>
-                  <span className="font-medium">Intake:</span>{" "}
-                  {university.intake}
-                </p>
-                <p>
-                  <span className="font-medium">Programs:</span>{" "}
-                  {university.programs}
-                </p>
-                <p>
-                  <span className="font-medium">Ranking:</span>{" "}
-                  {university.ranking}
-                </p>
-                {university.description && (
-                  <p>
-                    <span className="font-medium">Description:</span>{" "}
-                    {university.description}
-                  </p>
+      {filteredUniversities.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-lg shadow">
+          <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
+          <h3 className="mt-2 text-lg font-medium text-gray-900">
+            No universities found
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">
+            {searchTerm
+              ? "Try adjusting your search"
+              : "Get started by adding a new university"}
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {filteredUniversities.map((university, index) => (
+            <motion.div
+              key={university.$id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              <div className="relative h-48 bg-gray-200">
+                {university.imageId ? (
+                  <Image
+                    src={getUniversityImageUrl(university.imageId) || ""}
+                    alt={university.name}
+                    fill
+                    className="object-cover"
+                    onError={() => "/placeholder.jpg"}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <ImageIcon className="w-12 h-12 text-gray-400" />
+                  </div>
                 )}
               </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+
+              <div className="p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-semibold text-gray-900 truncate">
+                      {university.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 truncate">
+                      {university.country}
+                    </p>
+                  </div>
+                  <div className="flex space-x-2">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => startEditing(university)}
+                      className="text-green-600 hover:text-green-900 transition-colors"
+                      aria-label={`Edit ${university.name}`}
+                    >
+                      <Edit size={16} />
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => handleDelete(university.$id)}
+                      className="text-red-600 hover:text-red-900 transition-colors"
+                      aria-label={`Delete ${university.name}`}
+                    >
+                      <Trash2 size={16} />
+                    </motion.button>
+                  </div>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <p>
+                    <span className="font-medium">Intake:</span>{" "}
+                    {university.intake}
+                  </p>
+                  <p>
+                    <span className="font-medium">Programs:</span>{" "}
+                    {university.programs}
+                  </p>
+                  <p>
+                    <span className="font-medium">Ranking:</span>{" "}
+                    {university.ranking}
+                  </p>
+                  {university.description && (
+                    <p className="line-clamp-2">
+                      <span className="font-medium">Description:</span>{" "}
+                      {university.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* Modal */}
       {isModalOpen && (
@@ -312,7 +337,7 @@ export default function UniversitiesPage() {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-xl font-bold mb-4">
@@ -320,10 +345,14 @@ export default function UniversitiesPage() {
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   University Name
                 </label>
                 <input
+                  id="name"
                   type="text"
                   value={formData.name}
                   onChange={(e) =>
@@ -335,10 +364,14 @@ export default function UniversitiesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="country"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Country
                 </label>
                 <input
+                  id="country"
                   type="text"
                   value={formData.country}
                   onChange={(e) =>
@@ -350,31 +383,41 @@ export default function UniversitiesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="image"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   University Image
                 </label>
                 <input
+                  id="image"
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
                   className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all"
+                  aria-label="Upload university image"
                 />
                 {previewUrl && (
-                  <div className="mt-2">
-                    <img
+                  <div className="mt-2 relative h-32 w-full">
+                    <Image
                       src={previewUrl}
                       alt="Preview"
-                      className="h-32 object-cover rounded border border-gray-200"
+                      fill
+                      className="object-cover rounded border border-gray-200"
                     />
                   </div>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="intake"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Intake Information
                 </label>
                 <input
+                  id="intake"
                   type="text"
                   value={formData.intake}
                   onChange={(e) =>
@@ -387,10 +430,14 @@ export default function UniversitiesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="programs"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Programs
                 </label>
                 <input
+                  id="programs"
                   type="text"
                   value={formData.programs}
                   onChange={(e) =>
@@ -402,10 +449,14 @@ export default function UniversitiesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="ranking"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Ranking
                 </label>
                 <input
+                  id="ranking"
                   type="text"
                   value={formData.ranking}
                   onChange={(e) =>
@@ -417,10 +468,14 @@ export default function UniversitiesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Description (Optional)
                 </label>
                 <textarea
+                  id="description"
                   value={formData.description}
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
@@ -430,7 +485,7 @@ export default function UniversitiesPage() {
                 />
               </div>
 
-              <div className="flex justify-end space-x-3">
+              <div className="flex flex-col sm:flex-row justify-end gap-3">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

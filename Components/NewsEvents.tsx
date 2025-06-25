@@ -4,15 +4,21 @@ import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import Link from "next/link";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-export default function TextCarousel() {
-  const navigationPrevRef = useRef(null);
-  const navigationNextRef = useRef(null);
+interface CarouselItem {
+  title: string;
+  description: string;
+}
 
-  const items = [
+export default function TextCarousel() {
+  const navigationPrevRef = useRef<HTMLButtonElement>(null);
+  const navigationNextRef = useRef<HTMLButtonElement>(null);
+
+  const items: CarouselItem[] = [
     {
       title: "University Fair 2024",
       description:
@@ -46,7 +52,8 @@ export default function TextCarousel() {
             <button
               ref={navigationPrevRef}
               className="p-2 rounded-full bg-[#2C3C81] text-[#F5F4F5] hover:bg-[#C73D43] transition-colors"
-              aria-label="Previous"
+              aria-label="Previous slide"
+              type="button"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
@@ -61,7 +68,8 @@ export default function TextCarousel() {
             <button
               ref={navigationNextRef}
               className="p-2 rounded-full bg-[#2C3C81] text-[#F5F4F5] hover:bg-[#C73D43] transition-colors"
-              aria-label="Next"
+              aria-label="Next slide"
+              type="button"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
@@ -87,10 +95,22 @@ export default function TextCarousel() {
           pagination={{ clickable: true }}
           autoplay={{ delay: 5000 }}
           onInit={(swiper) => {
-            swiper.params.navigation.prevEl = navigationPrevRef.current;
-            swiper.params.navigation.nextEl = navigationNextRef.current;
-            swiper.navigation.init();
-            swiper.navigation.update();
+            // Type-safe navigation initialization
+            if (navigationPrevRef.current && navigationNextRef.current) {
+              // eslint-disable-next-line no-param-reassign
+              swiper.params.navigation.prevEl = navigationPrevRef.current;
+              // eslint-disable-next-line no-param-reassign
+              swiper.params.navigation.nextEl = navigationNextRef.current;
+              swiper.navigation.init();
+              swiper.navigation.update();
+            }
+          }}
+          onSwiper={(swiper) => {
+            // Additional safety check after swiper initialization
+            if (navigationPrevRef.current && navigationNextRef.current) {
+              swiper.navigation.init();
+              swiper.navigation.update();
+            }
           }}
           className="!pb-12"
         >
@@ -107,10 +127,13 @@ export default function TextCarousel() {
         </Swiper>
 
         <div className="text-center mt-8">
-          <button className="group inline-flex items-center bg-[#C73D43] text-[#F5F4F5] px-6 py-3 rounded-lg font-semibold hover:bg-[#2C3C81] transition-colors">
+          <Link
+            href="/news-offers"
+            className="group inline-flex items-center bg-[#C73D43] text-[#F5F4F5] px-6 py-3 rounded-lg font-semibold hover:bg-[#2C3C81] transition-colors"
+          >
             View All Updates
             <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
+          </Link>
         </div>
       </div>
     </div>

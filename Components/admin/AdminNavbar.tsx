@@ -15,24 +15,31 @@ import {
   Globe,
   GraduationCap,
   LogOut,
-  ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 
+interface User {
+  email: string;
+  name: string;
+  $id: string;
+}
+
 interface AdminNavbarProps {
-  user: {
-    email: string;
-    name: string;
-    $id: string;
-  };
+  user: User;
+}
+
+interface NavItem {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ size?: number }>;
 }
 
 const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
 
-  const navigation = [
+  const navigation: NavItem[] = [
     { name: "Dashboard", href: "/admin", icon: Home },
     { name: "Stories", href: "/admin/stories", icon: BookOpen },
     { name: "Gallery", href: "/admin/gallery", icon: Image },
@@ -44,14 +51,14 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
 
   const sidebarVariants = {
     collapsed: {
-      width: "4rem",
+      width: "80px",
       transition: {
         duration: 0.3,
         ease: "easeInOut",
       },
     },
     expanded: {
-      width: "16rem",
+      width: "280px",
       transition: {
         duration: 0.3,
         ease: "easeInOut",
@@ -105,6 +112,7 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsMobileOpen(!isMobileOpen)}
           className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
+          aria-label="Toggle menu"
         >
           <AnimatePresence mode="wait">
             {isMobileOpen ? (
@@ -132,39 +140,22 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
         </motion.button>
       </div>
 
-      {/* Mobile Overlay */}
-      <AnimatePresence>
-        {isMobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
-            onClick={() => setIsMobileOpen(false)}
-          />
-        )}
-      </AnimatePresence>
-
       {/* Desktop Sidebar */}
-      <motion.div
+      <motion.aside
         variants={sidebarVariants}
-        initial="collapsed"
         animate={isExpanded ? "expanded" : "collapsed"}
-        onMouseEnter={() => setIsExpanded(true)}
-        onMouseLeave={() => setIsExpanded(false)}
-        className="hidden lg:flex fixed left-0 top-0 h-full bg-gray-900 text-white z-40 flex-col shadow-xl"
+        className="hidden lg:flex fixed left-0 top-0 h-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white z-40 flex-col shadow-lg border-r border-gray-200 dark:border-gray-700"
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-4 border-b border-gray-700">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <motion.div
                 variants={contentVariants}
                 className="flex items-center space-x-3"
               >
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <Home size={16} />
+                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <Home size={20} className="text-white" />
                 </div>
                 <AnimatePresence>
                   {isExpanded && (
@@ -179,21 +170,23 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
                   )}
                 </AnimatePresence>
               </motion.div>
-              
+
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="p-1 hover:bg-gray-800 rounded transition-colors"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
               >
                 <motion.div
                   animate={{ rotate: isExpanded ? 180 : 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ChevronRight size={16} />
+                  <ChevronRight size={20} />
                 </motion.div>
               </motion.button>
             </div>
-            
+
             <AnimatePresence>
               {isExpanded && (
                 <motion.p
@@ -201,7 +194,7 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2, delay: 0.15 }}
-                  className="text-gray-300 text-sm mt-1"
+                  className="text-gray-500 dark:text-gray-300 text-sm mt-1"
                 >
                   {user.name}
                 </motion.p>
@@ -210,7 +203,7 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4">
+          <nav className="flex-1 p-4 overflow-y-auto">
             <ul className="space-y-2">
               {navigation.map((item, index) => {
                 const Icon = item.icon;
@@ -227,17 +220,21 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
                       href={item.href}
                       className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group ${
                         isActive
-                          ? "bg-blue-600 text-white shadow-lg"
-                          : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                          ? "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-200 shadow-sm"
+                          : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                       }`}
                     >
                       <motion.div
                         whileHover={{ scale: 1.1 }}
-                        className={`flex-shrink-0 ${isActive ? "text-white" : "text-gray-400 group-hover:text-white"}`}
+                        className={`flex-shrink-0 ${
+                          isActive
+                            ? "text-blue-600 dark:text-blue-300"
+                            : "text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-300"
+                        }`}
                       >
-                        <Icon size={18} />
+                        <Icon size={20} />
                       </motion.div>
-                      
+
                       <AnimatePresence>
                         {isExpanded && (
                           <motion.span
@@ -259,21 +256,21 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-700">
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <form action="/api/auth/signout" method="POST">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="flex items-center gap-3 px-3 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-all duration-200 w-full text-left group"
+                className="flex items-center gap-3 px-3 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 w-full text-left group"
               >
                 <motion.div
                   whileHover={{ scale: 1.1 }}
-                  className="flex-shrink-0 text-gray-400 group-hover:text-white"
+                  className="flex-shrink-0 text-gray-500 dark:text-gray-400 group-hover:text-red-500"
                 >
-                  <LogOut size={18} />
+                  <LogOut size={20} />
                 </motion.div>
-                
+
                 <AnimatePresence>
                   {isExpanded && (
                     <motion.span
@@ -291,25 +288,25 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
             </form>
           </div>
         </div>
-      </motion.div>
+      </motion.aside>
 
       {/* Mobile Sidebar */}
       <AnimatePresence>
         {isMobileOpen && (
-          <motion.div
+          <motion.aside
             variants={mobileMenuVariants}
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="lg:hidden fixed left-0 top-0 w-64 h-full bg-gray-900 text-white z-50 shadow-xl"
+            className="lg:hidden fixed left-0 top-0 w-72 h-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white z-50 shadow-xl"
           >
             <div className="flex flex-col h-full">
               {/* Header */}
-              <div className="p-6 border-b border-gray-700">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                      <Home size={16} />
+                    <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                      <Home size={20} className="text-white" />
                     </div>
                     <h2 className="text-lg font-bold">Admin Panel</h2>
                   </div>
@@ -317,16 +314,19 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setIsMobileOpen(false)}
-                    className="p-1 hover:bg-gray-800 rounded transition-colors"
+                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                    aria-label="Close menu"
                   >
-                    <X size={16} />
+                    <X size={20} />
                   </motion.button>
                 </div>
-                <p className="text-gray-300 text-sm mt-1">{user.name}</p>
+                <p className="text-gray-500 dark:text-gray-300 text-sm mt-1">
+                  {user.name}
+                </p>
               </div>
 
               {/* Navigation */}
-              <nav className="flex-1 p-4">
+              <nav className="flex-1 p-4 overflow-y-auto">
                 <ul className="space-y-2">
                   {navigation.map((item, index) => {
                     const Icon = item.icon;
@@ -344,11 +344,11 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
                           onClick={() => setIsMobileOpen(false)}
                           className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 ${
                             isActive
-                              ? "bg-blue-600 text-white shadow-lg"
-                              : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                              ? "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-200 shadow-sm"
+                              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                           }`}
                         >
-                          <Icon size={18} />
+                          <Icon size={20} className="flex-shrink-0" />
                           <span className="font-medium">{item.name}</span>
                         </Link>
                       </motion.li>
@@ -358,21 +358,21 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
               </nav>
 
               {/* Footer */}
-              <div className="p-4 border-t border-gray-700">
+              <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                 <form action="/api/auth/signout" method="POST">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     type="submit"
-                    className="flex items-center gap-3 px-3 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-all duration-200 w-full text-left"
+                    className="flex items-center gap-3 px-3 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 w-full text-left"
                   >
-                    <LogOut size={18} />
+                    <LogOut size={20} className="text-red-500" />
                     <span className="font-medium">Sign Out</span>
                   </motion.button>
                 </form>
               </div>
             </div>
-          </motion.div>
+          </motion.aside>
         )}
       </AnimatePresence>
     </>
