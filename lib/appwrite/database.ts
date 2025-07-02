@@ -63,6 +63,15 @@ export interface University {
   createdAt?: string;
 }
 
+export interface Resource {
+  $id?: string;
+  name: string;
+  description?: string;
+  type: string;
+  size?: number;
+  createdAt?: string;
+}
+
 export class DatabaseService {
   private static async getClient() {
     return await createAdminClient();
@@ -308,6 +317,57 @@ export class DatabaseService {
     return await databases.deleteDocument(
       appwriteConfig.databaseId,
       appwriteConfig.collections.universities,
+      id
+    );
+  }
+
+  // Resources CRUD
+  static async createResource(data: Omit<Resource, "$id" | "createdAt">) {
+    const { databases } = await this.getClient();
+    return await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.resources,
+      ID.unique(),
+      {
+        ...data,
+        createdAt: new Date().toISOString(),
+      }
+    );
+  }
+
+  static async getResources(limit = 50, offset = 0) {
+    const { databases } = await this.getClient();
+    return await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.resources,
+      [Query.limit(limit), Query.offset(offset), Query.orderDesc("createdAt")]
+    );
+  }
+
+  static async getResource(id: string) {
+    const { databases } = await this.getClient();
+    return await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.resources,
+      id
+    );
+  }
+
+  static async updateResource(id: string, data: Partial<Resource>) {
+    const { databases } = await this.getClient();
+    return await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.resources,
+      id,
+      data
+    );
+  }
+
+  static async deleteResource(id: string) {
+    const { databases } = await this.getClient();
+    return await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.resources,
       id
     );
   }

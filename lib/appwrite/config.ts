@@ -5,12 +5,14 @@ export const appwriteConfig = {
   apiKey: process.env.NEXT_APPWRITE_KEY!,
   buckets: {
     gallery: process.env.NEXT_PUBLIC_APPWRITE_GALLERY_BUCKET!,
+    resources: process.env.NEXT_PUBLIC_APPWRITE_RESOURCES_BUCKET!,
     news: process.env.NEXT_PUBLIC_APPWRITE_NEWS_BUCKET!,
     universities: process.env.NEXT_PUBLIC_APPWRITE_UNIVERSITIES_BUCKET!,
     stories: process.env.NEXT_PUBLIC_APPWRITE_STORIES_BUCKET!,
   },
   collections: {
-    stories: "68622a2b00394add092f", // This will now handle testimonials
+    resources: "686354520002fd9e6c37",
+    stories: "68622a2b00394add092f",
     gallery: "68622cb6000612ca517e",
     forms: "6859912a0022520057f3",
     newsEvents: "68622af0000981b60e79",

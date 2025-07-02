@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { DatabaseService } from "@/lib/appwrite/database";
 
 interface CountryData {
-  [key: string]: unknown; // Replace with your actual country data structure
+  [key: string]: unknown;
 }
 
 export async function PUT(
