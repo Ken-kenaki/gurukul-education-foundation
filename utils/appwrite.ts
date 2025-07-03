@@ -10,6 +10,7 @@ export const appwriteConfig = {
     stories: process.env.NEXT_PUBLIC_APPWRITE_STORIES_BUCKET!,
     news: process.env.NEXT_PUBLIC_APPWRITE_NEWS_BUCKET!,
     universities: process.env.NEXT_PUBLIC_APPWRITE_UNIVERSITIES_BUCKET!,
+    teams: process.env.NEXT_PUBLIC_APPWRITE_TEAMS_BUCKET!,
   },
 };
 

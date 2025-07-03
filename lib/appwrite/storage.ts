@@ -10,9 +10,7 @@ export class StorageService {
 
   static async uploadFile(bucketId: string, file: File) {
     const { storage } = await this.getClient();
-    const fileId = ID.unique();
-    
-    return await storage.createFile(bucketId, fileId, file);
+    return await storage.createFile(bucketId, ID.unique(), file);
   }
 
   static async deleteFile(bucketId: string, fileId: string) {
@@ -20,11 +18,28 @@ export class StorageService {
     return await storage.deleteFile(bucketId, fileId);
   }
 
-  static getFilePreview(bucketId: string, fileId: string, width = 500, height = 300) {
-    return `${appwriteConfig.endpoint}/storage/buckets/${bucketId}/files/${fileId}/preview?project=${appwriteConfig.projectId}&width=${width}&height=${height}`;
+  static async getFile(bucketId: string, fileId: string) {
+    const { storage } = await this.getClient();
+    return await storage.getFile(bucketId, fileId);
   }
 
-  static getFileView(bucketId: string, fileId: string) {
-    return `${appwriteConfig.endpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${appwriteConfig.projectId}`;
+  static async getFileDownload(bucketId: string, fileId: string) {
+    const { storage } = await this.getClient();
+    return await storage.getFileDownload(bucketId, fileId);
+  }
+
+  static async getFileView(bucketId: string, fileId: string) {
+    const { storage } = await this.getClient();
+    return storage.getFileView(bucketId, fileId);
+  }
+
+  static async getFilePreview(
+    bucketId: string,
+    fileId: string,
+    width = 500,
+    height = 300
+  ) {
+    const { storage } = await this.getClient();
+    return storage.getFilePreview(bucketId, fileId, width, height);
   }
 }

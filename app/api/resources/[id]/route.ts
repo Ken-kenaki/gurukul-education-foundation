@@ -1,44 +1,64 @@
 import { DatabaseService } from "@/lib/appwrite/database";
-import { StorageService } from "@/lib/appwrite/storage";
 import { NextResponse } from "next/server";
 import { appwriteConfig } from "@/lib/appwrite/config";
-
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const resource = await DatabaseService.getResource(params.id);
-    return NextResponse.json(resource);
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to fetch resource" },
-      { status: 500 }
-    );
-  }
-}
+import { StorageService } from "@/lib/appwrite/storage";
 
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    // First get the resource to access the fileId
-    const resource = await DatabaseService.getResource(params.id);
+    const { databases } = await DatabaseService.getClient();
 
-    // Delete the file from storage
-    await StorageService.deleteFile(
-      appwriteConfig.buckets.resources,
-      resource.fileId
-    );
+    // 1. First try to get the resource
+    let resource;
+    try {
+      resource = await databases.getDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.collections.resources,
+        params.id
+      );
+    } catch (err) {
+      console.error("Error fetching resource:", err);
+      return NextResponse.json(
+        { error: "Resource not found" },
+        { status: 404 }
+      );
+    }
 
-    // Delete the resource record
-    await DatabaseService.deleteResource(params.id);
+    // 2. Delete associated file if exists
+    if (resource.fileId) {
+      try {
+        await StorageService.deleteFile(
+          appwriteConfig.buckets.resources,
+          resource.fileId
+        );
+        console.log("Successfully deleted file:", resource.fileId);
+      } catch (fileErr) {
+        console.error("Error deleting file (continuing anyway):", fileErr);
+        // Continue with document deletion even if file deletion fails
+      }
+    }
 
-    return NextResponse.json({ success: true });
+    // 3. Delete the document
+    try {
+      await databases.deleteDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.collections.resources,
+        params.id
+      );
+      return NextResponse.json({ success: true });
+    } catch (docErr) {
+      console.error("Error deleting document:", docErr);
+      throw docErr;
+    }
   } catch (error) {
+    console.error("Failed to delete resource:", error);
     return NextResponse.json(
-      { error: "Failed to delete resource" },
+      {
+        error: "Failed to delete resource",
+        details: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 }
     );
   }

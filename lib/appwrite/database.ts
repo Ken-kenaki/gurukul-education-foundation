@@ -28,6 +28,28 @@ export interface NewsEvent {
   updatedAt?: string;
 }
 
+export interface Resource {
+  $id?: string;
+  name: string;
+  description?: string;
+  type: string;
+  size?: number;
+  fileId?: string; // Added to store reference to the actual file
+  createdAt?: string;
+}
+
+export interface TeamMember {
+  $id?: string;
+  name: string;
+  position: string;
+  description: string;
+  bio?: string;
+  imageId?: string;
+  socialLinks?: string; // Stored as JSON string
+  skills?: string; // Stored as JSON string
+  createdAt?: string;
+}
+
 export interface FormSubmission {
   $id?: string;
   name: string;
@@ -60,15 +82,6 @@ export interface University {
   programs: string;
   ranking: string;
   description?: string;
-  createdAt?: string;
-}
-
-export interface Resource {
-  $id?: string;
-  name: string;
-  description?: string;
-  type: string;
-  size?: number;
   createdAt?: string;
 }
 
@@ -370,5 +383,16 @@ export class DatabaseService {
       appwriteConfig.collections.resources,
       id
     );
+  }
+
+  static async getResourceByFileId(fileId: string) {
+    const { databases } = await this.getClient();
+    const res = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.resources,
+      [Query.equal("fileId", fileId)]
+    );
+
+    return res.documents[0] || null;
   }
 }

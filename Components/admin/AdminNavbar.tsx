@@ -15,6 +15,8 @@ import {
   Globe,
   GraduationCap,
   LogOut,
+  Users,
+  Folder,
   ChevronRight,
 } from "lucide-react";
 
@@ -47,6 +49,8 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
     { name: "Events & News", href: "/admin/events-news", icon: Calendar },
     { name: "Countries", href: "/admin/countries", icon: Globe },
     { name: "Universities", href: "/admin/universities", icon: GraduationCap },
+    { name: "Resources", href: "/admin/resources", icon: Folder },
+    { name: "Team", href: "/admin/teams", icon: Users },
   ];
 
   const sidebarVariants = {

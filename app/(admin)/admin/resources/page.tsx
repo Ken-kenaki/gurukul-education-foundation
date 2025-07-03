@@ -1,16 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DatabaseService } from "@/lib/appwrite/database";
-import { StorageService } from "@/lib/appwrite/storage";
-import { appwriteConfig } from "@/lib/appwrite/config";
+
+interface Resource {
+  id: string;
+  name: string;
+  description?: string;
+  type: string;
+  size?: number;
+  fileId: string;
+  createdAt?: string;
+}
 
 export default function AdminResourcesPage() {
-  const [resources, setResources] = useState<any[]>([]);
+  const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [type, setType] = useState("document");
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchResources();
@@ -19,8 +29,14 @@ export default function AdminResourcesPage() {
   const fetchResources = async () => {
     try {
       setLoading(true);
-      const response = await DatabaseService.getResources();
-      setResources(response.documents);
+      const response = await fetch("/api/resources");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch resources");
+      }
+
+      const data = await response.json();
+      setResources(data);
     } catch (error) {
       console.error("Failed to fetch resources:", error);
     } finally {
@@ -28,57 +44,102 @@ export default function AdminResourcesPage() {
     }
   };
 
+  // page.tsx
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!file || !name) {
-      alert("File and name are required");
+    if (!file || !name || !type) {
+      alert("File, name, and type are required");
       return;
     }
 
     try {
+      setUploading(true);
       const formData = new FormData();
       formData.append("file", file);
       formData.append("name", name);
       formData.append("description", description);
+      formData.append("type", type);
 
       const response = await fetch("/api/resources", {
         method: "POST",
         body: formData,
       });
 
-      if (response.ok) {
-        fetchResources();
-        setName("");
-        setDescription("");
-        setFile(null);
-        alert("Resource added successfully");
-      } else {
-        throw new Error("Failed to add resource");
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("API Error:", data);
+        throw new Error(data.error || data.details || "Failed to add resource");
       }
+
+      setResources((prev) => [...prev, data]);
+      // Reset form
+      setName("");
+      setDescription("");
+      setType("document");
+      setFile(null);
+
+      alert("Resource added successfully");
     } catch (error) {
-      console.error("Error adding resource:", error);
-      alert("Failed to add resource");
+      console.error("Complete error:", error);
+      alert(
+        `Error: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
+    } finally {
+      setUploading(false);
     }
   };
-
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this resource?")) return;
 
     try {
+      setLoading(true);
+      setError(null); // Reset error state
+
       const response = await fetch(`/api/resources/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
-      if (response.ok) {
-        fetchResources();
-        alert("Resource deleted successfully");
-      } else {
-        throw new Error("Failed to delete resource");
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to delete resource");
       }
+
+      // Refresh the resources list
+      await fetchResources();
+    } catch (err) {
+      console.error("Error deleting resource:", err);
+      setError(
+        err instanceof Error ? err.message : "Failed to delete resource"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDownload = async (fileId: string, fileName: string) => {
+    try {
+      const response = await fetch(`/api/resources/download/${fileId}`);
+
+      if (!response.ok) throw new Error("Download failed");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.click();
+
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Error deleting resource:", error);
-      alert("Failed to delete resource");
+      console.error("Download failed:", error);
+      alert("Failed to download file");
     }
   };
 
@@ -100,7 +161,7 @@ export default function AdminResourcesPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              File
+              File *
             </label>
             <input
               type="file"
@@ -117,7 +178,7 @@ export default function AdminResourcesPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name
+              Name *
             </label>
             <input
               type="text"
@@ -130,7 +191,24 @@ export default function AdminResourcesPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description (Optional)
+              Type *
+            </label>
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              required
+            >
+              <option value="document">Document</option>
+              <option value="image">Image</option>
+              <option value="video">Video</option>
+              <option value="audio">Audio</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Description
             </label>
             <textarea
               value={description}
@@ -142,9 +220,10 @@ export default function AdminResourcesPage() {
 
           <button
             type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            disabled={uploading}
+            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Upload Resource
+            {uploading ? "Uploading..." : "Upload Resource"}
           </button>
         </form>
       </div>
@@ -177,7 +256,7 @@ export default function AdminResourcesPage() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {resources.map((resource) => (
-                  <tr key={resource.$id}>
+                  <tr key={resource.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
                         {resource.name}
@@ -195,22 +274,22 @@ export default function AdminResourcesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">
-                        {(resource.size / 1024).toFixed(2)} KB
+                        {resource.size
+                          ? `${Math.round(resource.size / 1024)} KB`
+                          : "-"}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <a
-                        href={StorageService.getFileView(
-                          appwriteConfig.buckets.resources,
-                          resource.fileId
-                        )}
-                        download
+                      <button
+                        onClick={() =>
+                          handleDownload(resource.fileId, resource.name)
+                        }
                         className="text-blue-600 hover:text-blue-900 mr-4"
                       >
                         Download
-                      </a>
+                      </button>
                       <button
-                        onClick={() => handleDelete(resource.$id)}
+                        onClick={() => handleDelete(resource.id)}
                         className="text-red-600 hover:text-red-900"
                       >
                         Delete
