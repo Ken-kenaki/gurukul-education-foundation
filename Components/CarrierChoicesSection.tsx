@@ -40,7 +40,7 @@ export default function CareerChoicesSection() {
           />
         </svg>
       ),
-      countries: ["USA", "Germany", "Canada", "Japan"],
+      countries: ["USA", "South Korea", "UK", "Japan"],
     },
     {
       title: "Business & Management",
@@ -62,7 +62,7 @@ export default function CareerChoicesSection() {
           />
         </svg>
       ),
-      countries: ["UK", "USA", "France", "Australia"],
+      countries: ["UK", "USA", "Japan", "Australia"],
     },
     {
       title: "Medicine & Healthcare",
@@ -84,7 +84,7 @@ export default function CareerChoicesSection() {
           />
         </svg>
       ),
-      countries: ["USA", "UK", "Australia", "Ireland"],
+      countries: ["USA", "UK", "Australia", "South Korea"],
     },
     {
       title: "Computer Science & AI",
@@ -106,7 +106,7 @@ export default function CareerChoicesSection() {
           />
         </svg>
       ),
-      countries: ["USA", "Canada", "Germany", "Sweden"],
+      countries: ["USA", "UK", "USA", "Malta"],
     },
   ];
 

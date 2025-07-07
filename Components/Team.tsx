@@ -104,7 +104,7 @@ export default function TeamCarousel() {
                 whileHover={{ y: -5 }}
                 className="text-center bg-[#F5F4F5] rounded-xl p-8 hover:shadow-lg transition-all duration-300 h-full"
               >
-                <Link href={`/team/${member.$id}`}>
+                <Link href={`/about/${member.$id}`}>
                   <div className="relative w-32 h-32 rounded-full overflow-hidden mx-auto mb-6">
                     <Image
                       src={member.imageUrl}
