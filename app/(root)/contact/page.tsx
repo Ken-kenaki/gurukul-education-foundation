@@ -14,6 +14,16 @@ export default function Admission() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState("");
   const statsRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -61,13 +71,15 @@ export default function Admission() {
     }
   };
 
-  // Animation setup
+  // Animation setup - simplified for mobile
   useEffect(() => {
     if (statsRef.current) {
       const children = statsRef.current.children;
       Array.from(children).forEach((child: HTMLElement, index: number) => {
         child.style.opacity = "0";
-        child.style.transform = "translateY(30px)";
+        child.style.transform = isMobile
+          ? "translateY(20px)"
+          : "translateY(30px)";
 
         setTimeout(() => {
           child.style.transition =
@@ -77,7 +89,7 @@ export default function Admission() {
         }, index * 200 + 500);
       });
     }
-  }, []);
+  }, [isMobile]);
 
   const stats = [
     { number: "2000+", label: "Students Abroad" },
@@ -88,14 +100,14 @@ export default function Admission() {
   return (
     <main className="overflow-x-hidden">
       <div
-        className="w-full max-w-[100vw] min-h-screen pt-50 py-12 px-4 sm:px-6"
+        className="w-full min-h-screen pt-20 md:pt-32 py-8 px-4 sm:px-6"
         style={{ background: "linear-gradient(to bottom, #F5F4F5, #ffffff)" }}
       >
-        {/* Success Popup - Made responsive */}
+        {/* Success Popup - Mobile optimized */}
         {showSuccess && (
-          <div className="fixed inset-0 flex items-start justify-center p-4 pt-20 pointer-events-none z-50">
+          <div className="fixed inset-0 flex items-start justify-center p-4 pt-16 md:pt-20 pointer-events-none z-50">
             <div
-              className="text-white px-6 py-3 rounded-lg shadow-lg max-w-full mx-4 animate-bounce"
+              className="text-white px-4 py-2 md:px-6 md:py-3 rounded-lg shadow-lg max-w-[90%] mx-4 animate-bounce"
               style={{ backgroundColor: "#2C3C81" }}
             >
               Consultation Request Successful! We'll contact you soon.
@@ -103,11 +115,11 @@ export default function Admission() {
           </div>
         )}
 
-        {/* Error Message - Made responsive */}
+        {/* Error Message - Mobile optimized */}
         {error && (
-          <div className="fixed inset-0 flex items-start justify-center p-4 pt-20 pointer-events-none z-50">
+          <div className="fixed inset-0 flex items-start justify-center p-4 pt-16 md:pt-20 pointer-events-none z-50">
             <div
-              className="text-white px-6 py-3 rounded-lg shadow-lg max-w-full mx-4"
+              className="text-white px-4 py-2 md:px-6 md:py-3 rounded-lg shadow-lg max-w-[90%] mx-4"
               style={{ backgroundColor: "#C73D43" }}
             >
               {error}
@@ -116,30 +128,34 @@ export default function Admission() {
         )}
 
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 md:mb-16">
             <h1
-              className="text-4xl md:text-5xl font-bold mb-4"
+              className="text-3xl md:text-5xl font-bold mb-3 md:mb-4"
               style={{ color: "#2C3C81" }}
             >
               Study Abroad Consultation
             </h1>
-            <p className="text-xl max-w-2xl mx-auto" style={{ color: "#666" }}>
+            <p
+              className="text-lg md:text-xl max-w-2xl mx-auto px-2"
+              style={{ color: "#666" }}
+            >
               Turn your dream of studying abroad into reality with Nepal's
               trusted education consultancy
             </p>
           </div>
 
           {/* Hero Image with Animated Stats */}
-          <div className="relative mb-16">
-            <div className="relative h-[500px] w-full flex items-center justify-center">
+          <div className="relative mb-12 md:mb-16">
+            <div className="relative h-[300px] md:h-[500px] w-full flex items-center justify-center">
               {/* Hero Image - Clean PNG without background */}
               <img
                 src="/hero.png"
                 alt="Study Abroad Consultation"
                 className="max-h-full max-w-full object-contain"
+                loading="lazy"
               />
 
-              {/* Animated Stats */}
+              {/* Animated Stats - Mobile optimized positioning */}
               <div
                 ref={statsRef}
                 className="absolute inset-0 pointer-events-none"
@@ -147,23 +163,29 @@ export default function Admission() {
                 {stats.map((stat, index) => (
                   <div
                     key={index}
-                    className={`absolute bg-white rounded-xl shadow-lg p-4 flex flex-col items-center justify-center border-2 pointer-events-auto ${
+                    className={`absolute bg-white rounded-lg md:rounded-xl shadow-md md:shadow-lg p-2 md:p-4 flex flex-col items-center justify-center border-2 pointer-events-auto ${
                       index === 0
-                        ? "w-32 top-16 -left-8 sm:left-0"
+                        ? isMobile
+                          ? "w-24 top-4 left-0"
+                          : "w-32 top-16 left-0"
                         : index === 1
-                        ? "w-36 top-8 -right-16 sm:right-0"
-                        : "w-40 bottom-16 right-8 sm:right-16"
+                        ? isMobile
+                          ? "w-28 top-2 right-0"
+                          : "w-36 top-8 right-0"
+                        : isMobile
+                        ? "w-32 bottom-4 right-4"
+                        : "w-40 bottom-16 right-16"
                     }`}
                     style={{ borderColor: "#C73D43" }}
                   >
                     <span
-                      className="text-2xl font-bold"
+                      className="text-xl md:text-2xl font-bold"
                       style={{ color: "#C73D43" }}
                     >
                       {stat.number}
                     </span>
                     <span
-                      className="text-sm text-center"
+                      className="text-xs md:text-sm text-center"
                       style={{ color: "#666" }}
                     >
                       {stat.label}
@@ -174,29 +196,32 @@ export default function Admission() {
             </div>
           </div>
 
-          {/* Consultation Form */}
+          {/* Consultation Form - Mobile optimized */}
           <form
             onSubmit={handleSubmit}
-            className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto"
+            className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl overflow-hidden max-w-2xl mx-auto"
             style={{ border: "2px solid #B2ACCE" }}
           >
-            <div className="p-8 sm:p-10">
+            <div className="p-6 sm:p-8 md:p-10">
               <h2
-                className="text-3xl font-bold mb-2"
+                className="text-2xl md:text-3xl font-bold mb-2"
                 style={{ color: "#2C3C81" }}
               >
                 Free Consultation
               </h2>
-              <p className="mb-8" style={{ color: "#666" }}>
+              <p
+                className="mb-6 md:mb-8 text-sm md:text-base"
+                style={{ color: "#666" }}
+              >
                 Get expert guidance on your study abroad journey
               </p>
 
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4 md:space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-sm font-medium mb-2"
+                      className="block text-sm font-medium mb-1 md:mb-2"
                       style={{ color: "#2C3C81" }}
                     >
                       Full Name
@@ -208,7 +233,7 @@ export default function Admission() {
                       value={form.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border rounded-lg transition focus:outline-none focus:ring-2"
+                      className="w-full px-3 py-2 md:px-4 md:py-3 border rounded-lg transition focus:outline-none focus:ring-2 text-sm md:text-base"
                       style={{
                         borderColor: "#B2ACCE",
                       }}
@@ -220,7 +245,7 @@ export default function Admission() {
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm font-medium mb-2"
+                      className="block text-sm font-medium mb-1 md:mb-2"
                       style={{ color: "#2C3C81" }}
                     >
                       Email
@@ -232,7 +257,7 @@ export default function Admission() {
                       value={form.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border rounded-lg transition focus:outline-none focus:ring-2"
+                      className="w-full px-3 py-2 md:px-4 md:py-3 border rounded-lg transition focus:outline-none focus:ring-2 text-sm md:text-base"
                       style={{
                         borderColor: "#B2ACCE",
                       }}
@@ -245,7 +270,7 @@ export default function Admission() {
                 <div>
                   <label
                     htmlFor="phone"
-                    className="block text-sm font-medium mb-2"
+                    className="block text-sm font-medium mb-1 md:mb-2"
                     style={{ color: "#2C3C81" }}
                   >
                     Phone Number
@@ -257,7 +282,7 @@ export default function Admission() {
                     value={form.phone}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border rounded-lg transition focus:outline-none focus:ring-2"
+                    className="w-full px-3 py-2 md:px-4 md:py-3 border rounded-lg transition focus:outline-none focus:ring-2 text-sm md:text-base"
                     style={{
                       borderColor: "#B2ACCE",
                     }}
@@ -269,7 +294,7 @@ export default function Admission() {
                 <div>
                   <label
                     htmlFor="message"
-                    className="block text-sm font-medium mb-2"
+                    className="block text-sm font-medium mb-1 md:mb-2"
                     style={{ color: "#2C3C81" }}
                   >
                     Tell us about your study abroad goals (Optional)
@@ -277,11 +302,11 @@ export default function Admission() {
                   <textarea
                     id="message"
                     name="message"
-                    rows={4}
+                    rows={3}
                     value={form.message}
                     onChange={handleChange}
                     placeholder="Which country are you interested in? What course would you like to pursue?"
-                    className="w-full px-4 py-3 border rounded-lg transition focus:outline-none focus:ring-2"
+                    className="w-full px-3 py-2 md:px-4 md:py-3 border rounded-lg transition focus:outline-none focus:ring-2 text-sm md:text-base"
                     style={{
                       borderColor: "#B2ACCE",
                     }}
@@ -293,7 +318,7 @@ export default function Admission() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full text-white py-4 px-6 rounded-lg font-bold text-lg transition transform hover:scale-[1.02] shadow-md disabled:opacity-70"
+                  className="w-full text-white py-3 md:py-4 px-6 rounded-lg font-bold text-base md:text-lg transition transform hover:scale-[1.02] shadow-md disabled:opacity-70"
                   style={{
                     backgroundColor: "#C73D43",
                   }}
@@ -336,14 +361,18 @@ export default function Admission() {
             </div>
 
             <div
-              className="p-6 text-center"
+              className="p-4 md:p-6 text-center"
               style={{ backgroundColor: "#F5F4F5" }}
             >
-              <p style={{ color: "#2C3C81" }}>
+              <p className="text-sm md:text-base" style={{ color: "#2C3C81" }}>
                 Ready to start your journey? Call us at{" "}
-                <span className="font-semibold" style={{ color: "#C73D43" }}>
+                <a
+                  href="tel:9844162726"
+                  className="font-semibold hover:underline"
+                  style={{ color: "#C73D43" }}
+                >
                   9844162726
-                </span>
+                </a>
               </p>
             </div>
           </form>
