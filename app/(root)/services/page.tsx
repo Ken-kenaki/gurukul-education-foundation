@@ -170,7 +170,7 @@ export default function ServicesPage() {
   };
 
   return (
-    <div className="min-h-screen pt-32 bg-gradient-to-br from-[#F5F4F5] via-white to-[#B2ACCE]/20">
+    <div className="min-h-screen pt-28 md:pt-40 bg-gradient-to-br from-[#F5F4F5] via-white to-[#B2ACCE]/20">
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}
         <motion.div

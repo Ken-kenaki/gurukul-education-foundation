@@ -20,5 +20,7 @@ export const appwriteConfig = {
     countries: "68622b8b002007f6d68a",
     universities: "68622c1b002c753f0fdd",
     teams: "6866562f003e1aca5dd3",
+    visaRequirements: "686f314d001140b38b74",
+    statistics: "687140af002107f06aa1",
   },
 };

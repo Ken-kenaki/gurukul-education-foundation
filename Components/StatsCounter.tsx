@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -20,12 +20,52 @@ export default function StatsCounter() {
   const studentRef = useRef<HTMLDivElement>(null);
   const universityRef = useRef<HTMLDivElement>(null);
   const countryRef = useRef<HTMLDivElement>(null);
+  const [stats, setStats] = useState({
+    students: 0,
+    universities: 0,
+    countries: 0,
+  });
+
+  // Fetch stats from API
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch("/api/statistics");
+        if (!response.ok) throw new Error("Failed to fetch statistics");
+        const data = await response.json();
+
+        // Assuming your API returns an array of stats
+        const statsData = data.documents.reduce((acc: any, stat: any) => {
+          acc[stat.name] = stat.count;
+          return acc;
+        }, {});
+
+        setStats({
+          students: statsData.students || 10000,
+          universities: statsData.universities || 100,
+          countries: statsData.countries || 5,
+        });
+      } catch (error) {
+        console.error("Error fetching statistics:", error);
+        // Fallback to default values
+        setStats({
+          students: 10000,
+          universities: 100,
+          countries: 5,
+        });
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   useEffect(() => {
+    if (!stats.students || !stats.universities || !stats.countries) return;
+
     const counters: CounterConfig[] = [
-      { element: studentRef, end: 10000, suffix: "+" },
-      { element: universityRef, end: 100, suffix: "+" },
-      { element: countryRef, end: 5, suffix: "+" },
+      { element: studentRef, end: stats.students, suffix: "+" },
+      { element: universityRef, end: stats.universities, suffix: "+" },
+      { element: countryRef, end: stats.countries, suffix: "+" },
     ];
 
     counters.forEach((counter) => {
@@ -60,7 +100,7 @@ export default function StatsCounter() {
     return () => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
-  }, []);
+  }, [stats]); // Re-run animation when stats change
 
   return (
     <section

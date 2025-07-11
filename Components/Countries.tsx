@@ -23,6 +23,23 @@ export default function CountriesCarousel() {
 
   const countries: Country[] = [
     {
+      name: "South Korea",
+      flag: "🇰🇷",
+      image: "/korea.jpg",
+      intake: "Spring: March | Fall: September",
+      programs: "400+ universities with global partnerships",
+      ranking:
+        "Top universities: Seoul National, KAIST, POSTECH, Yonsei, Korea University",
+    },
+    {
+      name: "Japan",
+      flag: "🇯🇵",
+      image: "/japan.jpg",
+      intake: "Spring: April | Fall: September/October",
+      programs: "800+ universities including national, public and private",
+      ranking: "Top universities: Tokyo, Kyoto, Osaka, Tohoku, Keio",
+    },
+    {
       name: "United States",
       flag: "🇺🇸",
       image: "/usa.jpg",
@@ -54,23 +71,6 @@ export default function CountriesCarousel() {
       intake: "Semester 1: February | Semester 2: July",
       programs: "43 universities with strong research programs",
       ranking: "Top universities: Melbourne, Sydney, ANU, Queensland, Monash",
-    },
-    {
-      name: "South Korea",
-      flag: "🇰🇷",
-      image: "/korea.jpg",
-      intake: "Spring: March | Fall: September",
-      programs: "400+ universities with global partnerships",
-      ranking:
-        "Top universities: Seoul National, KAIST, POSTECH, Yonsei, Korea University",
-    },
-    {
-      name: "Japan",
-      flag: "🇯🇵",
-      image: "/japan.jpg",
-      intake: "Spring: April | Fall: September/October",
-      programs: "800+ universities including national, public and private",
-      ranking: "Top universities: Tokyo, Kyoto, Osaka, Tohoku, Keio",
     },
   ];
 

@@ -100,7 +100,7 @@ export default function Admission() {
   return (
     <main className="overflow-x-hidden">
       <div
-        className="w-full min-h-screen pt-20 md:pt-32 py-8 px-4 sm:px-6"
+        className="w-full min-h-screen pt-30 md:pt-52 py-8 px-4 sm:px-6"
         style={{ background: "linear-gradient(to bottom, #F5F4F5, #ffffff)" }}
       >
         {/* Success Popup - Mobile optimized */}

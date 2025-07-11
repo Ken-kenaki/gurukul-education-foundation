@@ -1,8 +1,14 @@
-// app/why-choose-gurukul/page.tsx
 "use client";
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { getImageUrl, appwriteConfig } from "@/utils/appwrite";
+
+interface GalleryImage {
+  name: string;
+  url: string;
+}
 
 const COUNTRIES = {
   southKorea: {
@@ -81,24 +87,97 @@ const PROCESS_STEPS = [
 ];
 
 export default function WhyChooseGurukul() {
+  const [heroImages, setHeroImages] = useState<GalleryImage[]>([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchHeroImages() {
+      try {
+        setIsLoading(true);
+        const res = await fetch("/api/gallery");
+        if (!res.ok) throw new Error("Failed to fetch gallery");
+        const data = await res.json();
+
+        const formatted = data.map((img: any) => ({
+          name: img.title || "Untitled",
+          url: getImageUrl(img.imageId, appwriteConfig.buckets.gallery),
+        }));
+
+        // Filter or select specific images if needed
+        setHeroImages(formatted);
+      } catch (error) {
+        console.error("Hero images fetch error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchHeroImages();
+  }, []);
+
+  // Auto-rotate images every 2 seconds
+  useEffect(() => {
+    if (heroImages.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === heroImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
+
   return (
     <main className="overflow-x-hidden">
       <div className="w-full max-w-[100vw] bg-white">
-        {/* Enhanced Hero Section */}
+        {/* Enhanced Hero Section with Slideshow */}
         <section className="relative h-screen min-h-[600px] w-full overflow-hidden">
-          {/* Background Image with Gradient Overlay */}
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/why-us-1.jpeg"
-              alt="Students studying abroad with Gurukul Education Foundation"
-              fill
-              className="object-cover object-center"
-              priority
-              quality={100}
-              sizes="100vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/50 to-blue-600/30" />
-          </div>
+          {/* Background Slideshow with Gradient Overlay */}
+          {heroImages.length > 0 ? (
+            <>
+              {heroImages.map((image, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: index === currentImageIndex ? 1 : 0,
+                    zIndex: index === currentImageIndex ? 1 : 0,
+                  }}
+                  transition={{ duration: 1 }}
+                  className="absolute inset-0 z-0"
+                >
+                  <Image
+                    src={image.url}
+                    alt="Students studying abroad with Gurukul Education Foundation"
+                    fill
+                    className="object-cover object-center"
+                    priority
+                    quality={100}
+                    sizes="100vw"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/why-us-1.jpeg";
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-900/50 to-blue-600/30" />
+                </motion.div>
+              ))}
+            </>
+          ) : (
+            <div className="absolute inset-0 z-0">
+              <Image
+                src="/why-us-1.jpeg"
+                alt="Students studying abroad with Gurukul Education Foundation"
+                fill
+                className="object-cover object-center"
+                priority
+                quality={100}
+                sizes="100vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-900/50 to-blue-600/30" />
+            </div>
+          )}
 
           {/* Hero Content */}
           <div className="relative z-10 h-full flex items-center">
@@ -185,12 +264,30 @@ export default function WhyChooseGurukul() {
             </div>
           </div>
 
+          {/* Slideshow Indicators */}
+          {heroImages.length > 1 && (
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 flex gap-2">
+              {heroImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentImageIndex(index)}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    index === currentImageIndex
+                      ? "bg-white w-6"
+                      : "bg-white/50 hover:bg-white/80"
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
+
           {/* Scrolling Indicator */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5, duration: 0.5 }}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
           >
             <div className="animate-bounce flex flex-col items-center">
               <span className="text-white text-sm mb-2">Scroll Down</span>
@@ -212,7 +309,7 @@ export default function WhyChooseGurukul() {
           </motion.div>
         </section>
 
-        {/* Introduction */}
+        {/* Rest of your existing content... */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

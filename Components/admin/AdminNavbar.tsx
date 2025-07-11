@@ -18,6 +18,8 @@ import {
   Users,
   Folder,
   ChevronRight,
+  Plane,
+  BarChart,
 } from "lucide-react";
 
 interface User {
@@ -51,6 +53,12 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
     { name: "Universities", href: "/admin/universities", icon: GraduationCap },
     { name: "Resources", href: "/admin/resources", icon: Folder },
     { name: "Team", href: "/admin/teams", icon: Users },
+    {
+      name: "Visa Requirements",
+      href: "/admin/visa-requirements",
+      icon: Plane,
+    },
+    { name: "Stats", href: "/admin/stats", icon: BarChart },
   ];
 
   const sidebarVariants = {

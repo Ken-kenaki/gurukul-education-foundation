@@ -10,6 +10,7 @@ import {
   Plane,
   ScrollText,
 } from "lucide-react";
+import VisaRequirements from "@/Components/VisaRequirements";
 
 export default function SouthKoreaPage() {
   const stats = [
@@ -280,48 +281,7 @@ export default function SouthKoreaPage() {
                 </p>
               </motion.div>
             </div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="md:w-1/2 bg-white p-8 rounded-xl shadow-md"
-            >
-              <h3 className="text-xl font-bold mb-4 text-[#003580]">
-                Visa Requirements (D-2 Visa)
-              </h3>
-              <ul className="space-y-4">
-                <li className="flex items-start">
-                  <span className="text-[#CD0E2D] mr-2">•</span>
-                  <span>University admission letter</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-[#CD0E2D] mr-2">•</span>
-                  <span>Proof of financial stability ($10,000+ in bank)</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-[#CD0E2D] mr-2">•</span>
-                  <span>Clean criminal record</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-[#CD0E2D] mr-2">•</span>
-                  <span>Health insurance coverage</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-[#CD0E2D] mr-2">•</span>
-                  <span>Completed visa application form</span>
-                </li>
-              </ul>
-              <div className="mt-8">
-                <Link
-                  href="/services/visa-assistance"
-                  className="inline-flex items-center px-6 py-3 bg-[#CD0E2D] text-white rounded-lg font-medium hover:bg-[#a00b24] transition-colors"
-                >
-                  Get Visa Assistance
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </Link>
-              </div>
-            </motion.div>
+            <VisaRequirements countryName="South Korea" />
           </div>
         </div>
       </section>

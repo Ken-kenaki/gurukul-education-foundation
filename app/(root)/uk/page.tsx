@@ -10,6 +10,7 @@ import {
   Globe,
   Briefcase,
 } from "lucide-react";
+import VisaRequirements from "@/Components/VisaRequirements";
 
 export default function UKPage() {
   const stats = [
@@ -226,6 +227,7 @@ export default function UKPage() {
           </div>
         </div>
       </section>
+      <VisaRequirements countryName="UK" />
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-[#012169] to-[#C8102E] text-white">

@@ -10,6 +10,7 @@ import {
   MapPin,
   Users,
 } from "lucide-react";
+import VisaRequirements from "@/Components/VisaRequirements";
 
 export default function AustraliaPage() {
   const highlights = [
@@ -239,55 +240,7 @@ export default function AustraliaPage() {
                   </div>
                 </div>
               </motion.div>
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="lg:w-1/2 bg-white p-8 rounded-xl shadow-md"
-              >
-                <h3 className="text-2xl font-bold mb-4 text-[#012169]">
-                  Visa Requirements
-                </h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start">
-                    <div className="bg-[#E4002B] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                      1
-                    </div>
-                    <span>
-                      Confirmation of Enrollment (CoE) from Australian
-                      institution
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="bg-[#E4002B] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                      2
-                    </div>
-                    <span>Proof of financial capacity (AUD$21,041/year)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="bg-[#E4002B] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                      3
-                    </div>
-                    <span>Overseas Student Health Cover (OSHC)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="bg-[#E4002B] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3">
-                      4
-                    </div>
-                    <span>English proficiency (IELTS/TOEFL/PTE)</span>
-                  </li>
-                </ul>
-                <div className="mt-8">
-                  <Link
-                    href="/services/visa-assistance"
-                    className="inline-flex items-center px-6 py-3 bg-[#012169] text-white rounded-lg font-medium hover:bg-[#011155] transition-colors"
-                  >
-                    Get Visa Help
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Link>
-                </div>
-              </motion.div>
+              <VisaRequirements countryName="Australia" />
             </div>
           </div>
         </section>

@@ -10,6 +10,7 @@ import {
   Plane,
   ScrollText,
 } from "lucide-react";
+import VisaRequirements from "@/Components/VisaRequirements";
 
 export default function MaltaPage() {
   const stats = [
@@ -287,51 +288,7 @@ export default function MaltaPage() {
                   </p>
                 </motion.div>
               </div>
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="md:w-1/2 bg-gray-100 p-8 rounded-xl"
-              >
-                <h3 className="text-xl font-bold mb-4 text-[#2C3C81]">
-                  Student Visa Requirements
-                </h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start">
-                    <span className="text-[#C73D43] mr-2">•</span>
-                    <span>
-                      Letter of acceptance from a Maltese educational
-                      institution
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-[#C73D43] mr-2">•</span>
-                    <span>Proof of sufficient funds (€75 per day of stay)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-[#C73D43] mr-2">•</span>
-                    <span>Valid health insurance coverage</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-[#C73D43] mr-2">•</span>
-                    <span>Clean criminal record certificate</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-[#C73D43] mr-2">•</span>
-                    <span>Medical certificate</span>
-                  </li>
-                </ul>
-                <div className="mt-8">
-                  <Link
-                    href="/services/visa-assistance"
-                    className="inline-flex items-center px-6 py-3 bg-[#C73D43] text-white rounded-lg font-medium hover:bg-[#B2ACCE] transition-colors"
-                  >
-                    Get Visa Assistance
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Link>
-                </div>
-              </motion.div>
+              <VisaRequirements countryName="Malta" />
             </div>
           </div>
         </section>

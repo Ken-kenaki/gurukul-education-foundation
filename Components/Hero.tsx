@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface StatData {
   value: string;
@@ -23,8 +24,6 @@ export default function HeroSection(): JSX.Element {
   const floatingCardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const textElementsRef = useRef<(HTMLElement | null)[]>([]);
   const buttonsRef = useRef<HTMLDivElement>(null);
-  const [showConsultationModal, setShowConsultationModal] = useState(false);
-  const [showJourneyModal, setShowJourneyModal] = useState(false);
 
   const addToRefs = useCallback(
     (
@@ -44,16 +43,6 @@ export default function HeroSection(): JSX.Element {
       },
     []
   );
-
-  const handleConsultationSubmit = useCallback((): void => {
-    alert("Consultation booked! We will contact you soon.");
-    setShowConsultationModal(false);
-  }, []);
-
-  const handleJourneyStart = useCallback((): void => {
-    setShowJourneyModal(false);
-    setShowConsultationModal(true);
-  }, []);
 
   useEffect(() => {
     const animateElements = (): void => {
@@ -120,191 +109,6 @@ export default function HeroSection(): JSX.Element {
     animateElements();
   }, []);
 
-  const ConsultationModal = useCallback(
-    (): JSX.Element => (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 transform transition-all">
-          <h3 className="text-xl font-bold text-[#2C3C81] mb-4">
-            Book Free Consultation
-          </h3>
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="full-name"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Full Name
-              </label>
-              <input
-                id="full-name"
-                type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C73D43]"
-                placeholder="Enter your full name"
-                aria-label="Full Name"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C73D43]"
-                placeholder="Enter your email"
-                aria-label="Email"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="phone"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Phone
-              </label>
-              <input
-                id="phone"
-                type="tel"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C73D43]"
-                placeholder="Enter your phone number"
-                aria-label="Phone Number"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="country"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Preferred Country
-              </label>
-              <select
-                id="country"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C73D43]"
-                aria-label="Preferred Country"
-              >
-                <option value="">Select Country</option>
-                <option value="usa">USA</option>
-                <option value="canada">Canada</option>
-                <option value="uk">UK</option>
-                <option value="australia">Australia</option>
-                <option value="germany">Germany</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-          </div>
-          <div className="flex gap-3 mt-6">
-            <button
-              onClick={() => setShowConsultationModal(false)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
-              type="button"
-              aria-label="Cancel consultation booking"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleConsultationSubmit}
-              className="flex-1 px-4 py-2 bg-[#C73D43] text-white rounded-md hover:bg-[#2C3C81] transition-colors"
-              type="button"
-              aria-label="Confirm consultation booking"
-            >
-              Book Now
-            </button>
-          </div>
-        </div>
-      </div>
-    ),
-    [handleConsultationSubmit]
-  );
-
-  const JourneyModal = useCallback(
-    (): JSX.Element => (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl p-6 max-w-lg w-full mx-4 transform transition-all">
-          <h3 className="text-xl font-bold text-[#2C3C81] mb-4">
-            Start Your Education Journey
-          </h3>
-          <div className="space-y-4">
-            <p className="text-gray-600">
-              Choose your path to global education excellence:
-            </p>
-            <div className="grid grid-cols-1 gap-3">
-              <button
-                className="p-4 border rounded-lg hover:border-[#C73D43] hover:bg-red-50 transition-all text-left"
-                type="button"
-                aria-label="Undergraduate Programs"
-              >
-                <div className="font-semibold text-[#2C3C81]">
-                  🎓 Undergraduate Programs
-                </div>
-                <div className="text-sm text-gray-600">
-                  Bachelor&apos;s degree programs worldwide
-                </div>
-              </button>
-              <button
-                className="p-4 border rounded-lg hover:border-[#C73D43] hover:bg-red-50 transition-all text-left"
-                type="button"
-                aria-label="Graduate Programs"
-              >
-                <div className="font-semibold text-[#2C3C81]">
-                  📚 Graduate Programs
-                </div>
-                <div className="text-sm text-gray-600">
-                  Master&apos;s and PhD programs
-                </div>
-              </button>
-              <button
-                className="p-4 border rounded-lg hover:border-[#C73D43] hover:bg-red-50 transition-all text-left"
-                type="button"
-                aria-label="Test Preparation"
-              >
-                <div className="font-semibold text-[#2C3C81]">
-                  📝 Test Preparation
-                </div>
-                <div className="text-sm text-gray-600">
-                  IELTS, TOEFL, GRE, GMAT prep
-                </div>
-              </button>
-              <button
-                className="p-4 border rounded-lg hover:border-[#C73D43] hover:bg-red-50 transition-all text-left"
-                type="button"
-                aria-label="Scholarship Guidance"
-              >
-                <div className="font-semibold text-[#2C3C81]">
-                  💰 Scholarship Guidance
-                </div>
-                <div className="text-sm text-gray-600">
-                  Find and apply for scholarships
-                </div>
-              </button>
-            </div>
-          </div>
-          <div className="flex gap-3 mt-6">
-            <button
-              onClick={() => setShowJourneyModal(false)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
-              type="button"
-              aria-label="Close journey modal"
-            >
-              Close
-            </button>
-            <button
-              onClick={handleJourneyStart}
-              className="flex-1 px-4 py-2 bg-[#C73D43] text-white rounded-md hover:bg-[#2C3C81] transition-colors"
-              type="button"
-              aria-label="Get started with education journey"
-            >
-              Get Started
-            </button>
-          </div>
-        </div>
-      </div>
-    ),
-    [handleJourneyStart]
-  );
-
   const statsData: StatData[] = [
     { value: "98%", label: "Success Rate" },
     { value: "50+", label: "Universities" },
@@ -343,140 +147,132 @@ export default function HeroSection(): JSX.Element {
   ];
 
   return (
-    <>
-      <div
-        ref={heroRef}
-        className="bg-[#F5F4F5] min-h-screen lg:pt-50 pt-24 pb-8 md:pb-16 overflow-hidden"
-      >
-        <div className="container mx-auto px-4 max-w-7xl">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Left Content */}
-            <div className="space-y-6 md:space-y-8">
-              <div className="space-y-4 md:space-y-6">
-                <div
-                  ref={addToRefs(textElementsRef, 0)}
-                  className="inline-block bg-[#B2ACCE]/30 text-[#2C3C81] px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-medium"
-                >
-                  Trusted by 10,000+ Students Worldwide
-                </div>
-
-                <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight">
-                  <span
-                    ref={addToRefs(textElementsRef, 1)}
-                    className="text-[#2C3C81] block"
-                  >
-                    Your Gateway to{" "}
-                  </span>
-                  <span
-                    ref={addToRefs(textElementsRef, 2)}
-                    className="text-[#C73D43] block"
-                  >
-                    Global
-                  </span>
-                  <span
-                    ref={addToRefs(textElementsRef, 3)}
-                    className="text-[#C73D43] block"
-                  >
-                    Education{" "}
-                  </span>
-                  <span
-                    ref={addToRefs(textElementsRef, 4)}
-                    className="text-[#2C3C81] block"
-                  >
-                    Excellence
-                  </span>
-                </h1>
-
-                <p
-                  ref={addToRefs(textElementsRef, 5)}
-                  className="text-[#2C3C81]/80 text-base md:text-lg max-w-lg leading-relaxed"
-                >
-                  At Gurukul Education Foundation, we transform dreams into
-                  reality. Expert guidance, comprehensive test prep, and
-                  personalized support for your international education journey.
-                </p>
+    <div
+      ref={heroRef}
+      className="bg-[#F5F4F5] min-h-screen lg:pt-50 pt-24 pb-8 md:pb-16 overflow-hidden"
+    >
+      <div className="container mx-auto px-4 max-w-7xl">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          {/* Left Content */}
+          <div className="space-y-6 md:space-y-8">
+            <div className="space-y-4 md:space-y-6">
+              <div
+                ref={addToRefs(textElementsRef, 0)}
+                className="inline-block bg-[#B2ACCE]/30 text-[#2C3C81] px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-medium"
+              >
+                Trusted by 10,000+ Students Worldwide
               </div>
 
-              <div ref={buttonsRef} className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={() => setShowJourneyModal(true)}
-                  className="group flex items-center justify-center space-x-2 bg-[#C73D43] text-[#F5F4F5] px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold hover:bg-[#2C3C81] hover:shadow-lg transition-all duration-300 shadow-md"
-                  type="button"
-                  aria-label="Start your education journey"
+              <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight">
+                <span
+                  ref={addToRefs(textElementsRef, 1)}
+                  className="text-[#2C3C81] block"
                 >
-                  <span>START YOUR JOURNEY</span>
-                  <ArrowRight className="w-4 md:w-5 h-4 md:h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-
-                <button
-                  onClick={() => setShowConsultationModal(true)}
-                  className="group flex items-center justify-center space-x-2 bg-transparent border-2 border-[#2C3C81] text-[#2C3C81] px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold hover:bg-[#2C3C81] hover:text-[#F5F4F5] hover:shadow-lg transition-all duration-300"
-                  type="button"
-                  aria-label="Book free consultation"
+                  Your Gateway to{" "}
+                </span>
+                <span
+                  ref={addToRefs(textElementsRef, 2)}
+                  className="text-[#C73D43] block"
                 >
-                  <span>📞</span>
-                  <span className="text-sm md:text-base">
-                    BOOK FREE CONSULTATION
-                  </span>
-                </button>
-              </div>
+                  Global
+                </span>
+                <span
+                  ref={addToRefs(textElementsRef, 3)}
+                  className="text-[#C73D43] block"
+                >
+                  Education{" "}
+                </span>
+                <span
+                  ref={addToRefs(textElementsRef, 4)}
+                  className="text-[#2C3C81] block"
+                >
+                  Excellence
+                </span>
+              </h1>
 
-              {/* Success Stats */}
-              <div className="grid grid-cols-3 gap-4 md:gap-6 pt-6 md:pt-8 border-t border-[#B2ACCE]/30">
-                {statsData.map((stat, index) => (
-                  <div
-                    key={`stat-${index}`}
-                    ref={addToRefs(textElementsRef, 6 + index)}
-                    className="text-center"
-                  >
-                    <div className="text-xl md:text-2xl font-bold text-[#C73D43]">
-                      {stat.value}
-                    </div>
-                    <div className="text-xs md:text-sm text-[#2C3C81]/70">
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <p
+                ref={addToRefs(textElementsRef, 5)}
+                className="text-[#2C3C81]/80 text-base md:text-lg max-w-lg leading-relaxed"
+              >
+                At Gurukul Education Foundation, we transform dreams into
+                reality. Expert guidance, comprehensive test prep, and
+                personalized support for your international education journey.
+              </p>
             </div>
 
-            {/* Right Content - Hero Image with Floating Elements */}
-            <div className="relative mt-8 lg:mt-0">
-              <div
-                ref={imageContainerRef}
-                className="relative w-full h-[500px] md:h-[600px] lg:h-[700px] rounded-3xl overflow-hidden flex items-center justify-center"
+            <div ref={buttonsRef} className="flex flex-col sm:flex-row gap-4">
+              <a
+                href="tel:+1234567890" // Replace with your actual phone number
+                className="group flex items-center justify-center space-x-2 bg-[#C73D43] text-[#F5F4F5] px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold hover:bg-[#2C3C81] hover:shadow-lg transition-all duration-300 shadow-md"
+                aria-label="Call us to start your education journey"
               >
-                {/* Hero Image */}
-                <Image
-                  src="/girl.png"
-                  alt="Students studying abroad - Gurukul Education Foundation"
-                  fill
-                  className="object-contain"
-                  priority
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
+                <span>START YOUR JOURNEY</span>
+                <ArrowRight className="w-4 md:w-5 h-4 md:h-5 group-hover:translate-x-1 transition-transform" />
+              </a>
 
-                {/* Enhanced Floating Cards */}
-                {floatingCardsData.map((card, index) => (
-                  <div
-                    key={`card-${index}`}
-                    ref={addToFloatingRefs(index)}
-                    className={`absolute ${card.position} ${card.bg} ${card.text} px-4 py-3 rounded-xl shadow-lg transition-all duration-300 cursor-pointer z-10 hover:z-20 hover:scale-110 hover:-translate-y-1 hover:shadow-xl`}
-                    aria-label={`${card.title}: ${card.value}`}
-                  >
-                    <div className="text-xs opacity-80">{card.title}</div>
-                    <div className="font-bold text-sm">{card.value}</div>
+              <Link
+                href="/contact"
+                className="group flex items-center justify-center space-x-2 bg-transparent border-2 border-[#2C3C81] text-[#2C3C81] px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold hover:bg-[#2C3C81] hover:text-[#F5F4F5] hover:shadow-lg transition-all duration-300"
+                aria-label="Go to contact page for free consultation"
+              >
+                <span>📞</span>
+                <span className="text-sm md:text-base">
+                  BOOK FREE CONSULTATION
+                </span>
+              </Link>
+            </div>
+
+            {/* Success Stats */}
+            <div className="grid grid-cols-3 gap-4 md:gap-6 pt-6 md:pt-8 border-t border-[#B2ACCE]/30">
+              {statsData.map((stat, index) => (
+                <div
+                  key={`stat-${index}`}
+                  ref={addToRefs(textElementsRef, 6 + index)}
+                  className="text-center"
+                >
+                  <div className="text-xl md:text-2xl font-bold text-[#C73D43]">
+                    {stat.value}
                   </div>
-                ))}
-              </div>
+                  <div className="text-xs md:text-sm text-[#2C3C81]/70">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Content - Hero Image with Floating Elements */}
+          <div className="relative mt-8 lg:mt-0">
+            <div
+              ref={imageContainerRef}
+              className="relative w-full h-[500px] md:h-[600px] lg:h-[700px] rounded-3xl overflow-hidden flex items-center justify-center"
+            >
+              {/* Hero Image */}
+              <Image
+                src="/girl.png"
+                alt="Students studying abroad - Gurukul Education Foundation"
+                fill
+                className="object-contain"
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+
+              {/* Enhanced Floating Cards */}
+              {floatingCardsData.map((card, index) => (
+                <div
+                  key={`card-${index}`}
+                  ref={addToFloatingRefs(index)}
+                  className={`absolute ${card.position} ${card.bg} ${card.text} px-4 py-3 rounded-xl shadow-lg transition-all duration-300 cursor-pointer z-10 hover:z-20 hover:scale-110 hover:-translate-y-1 hover:shadow-xl`}
+                  aria-label={`${card.title}: ${card.value}`}
+                >
+                  <div className="text-xs opacity-80">{card.title}</div>
+                  <div className="font-bold text-sm">{card.value}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
-
-      {/* Modals */}
-      {showConsultationModal && <ConsultationModal />}
-      {showJourneyModal && <JourneyModal />}
-    </>
+    </div>
   );
 }

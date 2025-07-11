@@ -28,6 +28,17 @@ export interface NewsEvent {
   updatedAt?: string;
 }
 
+export interface VisaRequirement {
+  $id?: string;
+  countryName: string;
+  title: string;
+  requirements: string[];
+  ctaText: string;
+  ctaLink: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface Resource {
   $id?: string;
   name: string;
@@ -71,6 +82,14 @@ export interface Country {
   ranking: string;
   description?: string;
   createdAt?: string;
+}
+
+export interface Statistic {
+  $id?: string;
+  name: string; // 'students', 'universities', 'countries'
+  count: number;
+  suffix: string;
+  updatedAt?: string;
 }
 
 export interface University {
@@ -394,5 +413,175 @@ export class DatabaseService {
     );
 
     return res.documents[0] || null;
+  }
+
+  // Add to DatabaseService class
+  static async createVisaRequirement(
+    data: Omit<VisaRequirement, "$id" | "createdAt" | "updatedAt">
+  ) {
+    const { databases } = await this.getClient();
+
+    try {
+      // Create the document with explicit ID generation
+      const result = await databases.createDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.collections.visaRequirements,
+        ID.unique(), // This is the crucial fix - generates a new unique ID
+        {
+          countryName: data.countryName,
+          title: data.title,
+          requirements: JSON.stringify(data.requirements),
+          ctaText: data.ctaText,
+          ctaLink: data.ctaLink,
+        }
+      );
+
+      return {
+        ...result,
+        requirements: JSON.parse(result.requirements),
+      };
+    } catch (error: any) {
+      console.error("Error creating visa requirement:", {
+        error: error.message,
+        type: error.type,
+        code: error.code,
+        response: error.response,
+      });
+      throw error;
+    }
+  }
+
+  static async getVisaRequirementsByCountryName(countryName: string) {
+    const { databases } = await this.getClient();
+    const result = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.visaRequirements,
+      [Query.equal("countryName", countryName)]
+    );
+
+    return {
+      ...result,
+      documents: result.documents.map((doc) => ({
+        ...doc,
+        requirements: JSON.parse(doc.requirements),
+      })),
+    };
+  }
+
+  static async getAllVisaRequirements() {
+    const { databases } = await this.getClient();
+    const result = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.visaRequirements,
+      [Query.orderDesc("createdAt")]
+    );
+
+    return {
+      ...result,
+      documents: result.documents.map((doc) => ({
+        ...doc,
+        requirements: JSON.parse(doc.requirements),
+      })),
+    };
+  }
+
+  static async getVisaRequirement(id: string) {
+    const { databases } = await this.getClient();
+    const doc = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.visaRequirements,
+      id
+    );
+
+    return {
+      ...doc,
+      requirements: JSON.parse(doc.requirements),
+    };
+  }
+
+  /**
+   * Update a visa requirement
+   */
+  static async updateVisaRequirement(
+    id: string,
+    data: Partial<VisaRequirement>
+  ) {
+    const { databases } = await this.getClient();
+    const updateData: any = {
+      ...data,
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (data.requirements) {
+      updateData.requirements = JSON.stringify(data.requirements);
+    }
+
+    return await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.visaRequirements,
+      id,
+      updateData
+    );
+  }
+
+  /**
+   * Delete a visa requirement
+   */
+  static async deleteVisaRequirement(id: string) {
+    const { databases } = await this.getClient();
+    return await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.visaRequirements,
+      id
+    );
+  }
+
+  /**
+   * Get all unique country names with visa requirements
+   */
+  static async getCountriesWithVisaRequirements() {
+    const { databases } = await this.getClient();
+    const result = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.visaRequirements,
+      [Query.select(["countryName"]), Query.limit(100)]
+    );
+
+    // Extract unique country names
+    const countries = new Set<string>();
+    result.documents.forEach((doc) => {
+      countries.add(doc.countryName);
+    });
+
+    return Array.from(countries);
+  }
+
+  // Statistics CRUD
+  static async getStatistic(name: string) {
+    const { databases } = await this.getClient();
+    const result = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.statistics,
+      [Query.equal("name", name), Query.limit(1)]
+    );
+    return result.documents[0] as Statistic | null;
+  }
+
+  static async updateStatistic(id: string, count: number) {
+    const { databases } = await this.getClient();
+    return await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.statistics,
+      id,
+      { count } // Only include attributes that exist in your schema
+    );
+  }
+
+  static async getAllStatistics() {
+    const { databases } = await this.getClient();
+    return await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.collections.statistics
+    );
   }
 }
