@@ -13,6 +13,7 @@ import {
   Star,
   CheckCircle,
 } from "lucide-react";
+import Link from "next/link";
 import Image from "next/image";
 
 export default function AboutPage() {
@@ -356,13 +357,15 @@ export default function AboutPage() {
               Join thousands of successful students who have achieved their
               international education dreams with our guidance.
             </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-[#C73D43] text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-[#2C3C81] transition-colors"
-            >
-              Get Free Consultation
-            </motion.button>
+            <Link href="/contact">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-[#C73D43] text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-[#2C3C81] transition-colors"
+              >
+                Get Free Consultation
+              </motion.button>
+            </Link>
           </div>
         </motion.section>
       </div>

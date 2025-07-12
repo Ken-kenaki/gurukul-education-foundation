@@ -386,7 +386,7 @@ export default function MaltaPage() {
                 Get Free Consultation
               </Link>
               <Link
-                href="/universities?country=malta"
+                href="/universities"
                 className="px-8 py-4 bg-white text-[#2C3C81] rounded-lg font-medium hover:bg-gray-100 border border-gray-300 transition-colors text-lg"
               >
                 Browse Universities

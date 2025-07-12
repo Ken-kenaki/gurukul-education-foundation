@@ -146,7 +146,7 @@ export default function Admission() {
 
           {/* Hero Image with Animated Stats */}
           <div className="relative mb-12 md:mb-16">
-            <div className="relative h-[300px] md:h-[500px] w-full flex items-center justify-center">
+            <div className="relative h-[400px] md:h-[600px] w-full flex items-center justify-center">
               {/* Hero Image - Clean PNG without background */}
               <img
                 src="/hero.png"
@@ -367,11 +367,11 @@ export default function Admission() {
               <p className="text-sm md:text-base" style={{ color: "#2C3C81" }}>
                 Ready to start your journey? Call us at{" "}
                 <a
-                  href="tel:9844162726"
+                  href="tel:01-5916232"
                   className="font-semibold hover:underline"
                   style={{ color: "#C73D43" }}
                 >
-                  9844162726
+                  01-5916232
                 </a>
               </p>
             </div>

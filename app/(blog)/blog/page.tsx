@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getImageUrl, appwriteConfig } from "@/utils/appwrite";
+import Link from "next/link";
 
 interface GalleryImage {
   name: string;
@@ -219,14 +220,14 @@ export default function WhyChooseGurukul() {
                     whileTap={{ scale: 0.98 }}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-xl transition-all duration-300"
                   >
-                    Explore Our Services
+                    <Link href="/services">Explore Our Services</Link>
                   </motion.button>
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.98 }}
                     className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-bold text-lg border-2 border-white/30 shadow-xl transition-all duration-300"
                   >
-                    Free Consultation
+                    <Link href="/contact">Free Consultation</Link>
                   </motion.button>
                 </motion.div>
 
@@ -509,7 +510,7 @@ export default function WhyChooseGurukul() {
               whileTap={{ scale: 0.95 }}
               className="bg-white text-blue-800 px-8 py-3 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all"
             >
-              Contact Us Now
+              <a href="tel:01-5916232">Contact Us Now</a>
             </motion.button>
           </div>
         </section>

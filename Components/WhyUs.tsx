@@ -55,7 +55,7 @@ export default function WhyUs() {
       image: "/why-us-1.jpeg",
       imagePosition: "left",
       buttonText: "MEET OUR TEAM",
-      buttonLink: "/about", // Updated link to /about route
+      buttonLink: "/about/#team", // Updated link to /about route
     },
     {
       title: "Personalized Approach",

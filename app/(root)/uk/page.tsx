@@ -265,7 +265,7 @@ export default function UKPage() {
               Book Free Consultation
             </Link>
             <Link
-              href="/uk-university-finder"
+              href="/universities"
               className="px-8 py-4 bg-transparent text-white rounded-lg font-medium hover:bg-white/10 border-2 border-white transition-colors text-lg"
             >
               Find Your University

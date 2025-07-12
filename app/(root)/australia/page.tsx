@@ -42,26 +42,26 @@ export default function AustraliaPage() {
       description:
         "Practical courses at TAFE institutes leading to diplomas and advanced diplomas",
       duration: "1-2 Years",
-      path: "/vocational",
+      path: "/universities",
     },
     {
       title: "Undergraduate",
       description:
         "Bachelor's degrees with options for double majors and honors",
       duration: "3-4 Years",
-      path: "/undergraduate",
+      path: "/universities",
     },
     {
       title: "Postgraduate",
       description: "Master's by coursework or research, including MBA programs",
       duration: "1-2 Years",
-      path: "/postgraduate",
+      path: "/universities",
     },
     {
       title: "Research Degrees",
       description: "PhD and research master's with world-class facilities",
       duration: "3-4 Years",
-      path: "/research",
+      path: "/universities",
     },
   ];
 
@@ -281,10 +281,10 @@ export default function AustraliaPage() {
                 Book Free Consultation
               </Link>
               <Link
-                href="/australia-university-finder"
+                href="/universities"
                 className="px-8 py-4 bg-transparent text-white rounded-lg font-medium hover:bg-white/10 border-2 border-white transition-colors text-lg"
               >
-                Find Courses
+                Find Univerisites
               </Link>
             </motion.div>
           </div>

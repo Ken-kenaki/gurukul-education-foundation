@@ -202,7 +202,7 @@ export default function HeroSection(): JSX.Element {
 
             <div ref={buttonsRef} className="flex flex-col sm:flex-row gap-4">
               <a
-                href="tel:+1234567890" // Replace with your actual phone number
+                href="tel:+01-5916232" // Replace with your actual phone number
                 className="group flex items-center justify-center space-x-2 bg-[#C73D43] text-[#F5F4F5] px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold hover:bg-[#2C3C81] hover:shadow-lg transition-all duration-300 shadow-md"
                 aria-label="Call us to start your education journey"
               >

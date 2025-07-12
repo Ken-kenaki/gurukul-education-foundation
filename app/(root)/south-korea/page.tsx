@@ -378,10 +378,10 @@ export default function SouthKoreaPage() {
               Get Free Consultation
             </Link>
             <Link
-              href="/scholarships?country=south-korea"
+              href="/univeristies"
               className="px-8 py-4 bg-white text-[#003580] rounded-lg font-medium hover:bg-gray-100 border border-gray-300 transition-colors text-lg"
             >
-              View Scholarships
+              View Universities
             </Link>
           </motion.div>
         </div>

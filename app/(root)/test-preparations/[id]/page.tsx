@@ -484,7 +484,7 @@ export default function TestPreparationDetailPage({ params }: PageProps) {
               </button>
 
               <button className="w-full border border-[#2C3C81] text-[#2C3C81] py-3 rounded-lg hover:bg-[#2C3C81] hover:text-white transition-colors">
-                Download Syllabus
+                <Link href="/resources"> Download Syllabus </Link>
               </button>
             </motion.div>
           </div>

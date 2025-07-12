@@ -31,11 +31,31 @@ interface ContactInfo {
 
 export default function Footer() {
   const socialLinks: SocialLink[] = [
-    { icon: <Facebook size={20} />, url: "#", label: "Facebook" },
-    { icon: <Twitter size={20} />, url: "#", label: "Twitter" },
-    { icon: <Instagram size={20} />, url: "#", label: "Instagram" },
-    { icon: <Linkedin size={20} />, url: "#", label: "LinkedIn" },
-    { icon: <Youtube size={20} />, url: "#", label: "YouTube" },
+    {
+      icon: <Facebook size={20} />,
+      url: "https://www.facebook.com/gurukuleducationalfoundation/",
+      label: "Facebook",
+    },
+    {
+      icon: <Instagram size={20} />,
+      url: "https://www.instagram.com/gurukul_education44/",
+      label: "Instagram",
+    },
+    {
+      icon: <Youtube size={20} />,
+      url: "#",
+      label: "YouTube",
+    },
+    {
+      icon: <Linkedin size={20} />,
+      url: "#",
+      label: "LinkedIn",
+    },
+    {
+      icon: <Twitter size={20} />,
+      url: "#",
+      label: "Twitter",
+    },
   ];
 
   const quickLinks: FooterLink[] = [
@@ -71,34 +91,48 @@ export default function Footer() {
     },
     {
       icon: <Phone className="text-[#C73D43]" size={18} />,
-      text: "+977-9844162726",
-      url: "tel:+9779844162726",
+      text: "01-5916232",
+      url: "tel:+977015916232",
+      isLink: true,
+    },
+    {
+      icon: <Phone className="text-[#C73D43]" size={18} />,
+      text: "+977-985-1349350",
+      url: "tel:+9779851349350",
+      isLink: true,
+    },
+    {
+      icon: <Phone className="text-[#C73D43]" size={18} />,
+      text: "+977-986-7818090",
+      url: "tel:+9779867818090",
       isLink: true,
     },
     {
       icon: <Mail className="text-[#C73D43]" size={18} />,
-      text: "info@gurukuleducation.com",
-      url: "mailto:info@gurukuleducation.com",
+      text: "info@gurukuleduc.com",
+      url: "mailto:info@gurukuleduc.com",
+      isLink: true,
+    },
+    {
+      icon: <Mail className="text-[#C73D43]" size={18} />,
+      text: "gurukuleducation44@gmail.com",
+      url: "mailto:gurukuleducation44@gmail.com",
       isLink: true,
     },
     {
       icon: <Clock className="text-[#C73D43]" size={18} />,
-      text: "Mon-Fri: 9:00 AM - 6:00 PM",
+      text: "Sun-Fri: 6:00 AM - 6:00 PM",
     },
     {
       icon: <Clock className="text-[#C73D43]" size={18} />,
-      text: "Sat: 10:00 AM - 4:00 PM",
-    },
-    {
-      icon: <Clock className="text-[#C73D43]" size={18} />,
-      text: "Sun: Closed",
+      text: "Saturday: Closed",
     },
   ];
 
   const legalLinks: FooterLink[] = [
-    { name: "Privacy Policy", url: "/privacy-policy" },
-    { name: "Terms of Service", url: "/terms" },
-    { name: "Sitemap", url: "/sitemap" },
+    { name: "Privacy Policy", url: "/" },
+    { name: "Terms of Service", url: "/" },
+    { name: "Sitemap", url: "/" },
   ];
 
   return (
@@ -108,8 +142,8 @@ export default function Footer() {
           {/* Logo and About */}
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">
-              <span className="text-[#F5F4F5]">Gurukul</span>
-              <span className="text-[#C73D43]">Education</span>
+              <span className="text-[#F5F4F5]">Gurukul Educ</span>
+              <span className="text-[#C73D43]">ation Foundation</span>
             </h2>
             <p className="text-[#B2ACCE] text-sm sm:text-base">
               Transforming dreams into global education realities.

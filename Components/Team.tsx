@@ -74,7 +74,7 @@ export default function TeamCarousel() {
       viewport={{ once: true }}
       className="py-16 px-4 bg-white"
     >
-      <div className="container mx-auto">
+      <div id="team" className="container mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-[#2C3C81] text-center mb-12">
           Meet Our Team
         </h2>
