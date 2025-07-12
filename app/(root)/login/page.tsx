@@ -42,7 +42,9 @@ export default function LoginPage() {
         router.push("/admin");
       } else {
         const errorData = await response.json();
-        setError(errorData.error || "Login failed. Please check your credentials.");
+        setError(
+          errorData.error || "Login failed. Please check your credentials."
+        );
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -66,9 +68,7 @@ export default function LoginPage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-center"
           >
-            <h2 className="text-3xl font-bold text-[#2C3C81]">
-              Welcome Back
-            </h2>
+            <h2 className="text-3xl font-bold text-[#2C3C81]">Welcome Back</h2>
             <p className="mt-2 text-[#2C3C81]/70">
               Sign in to your admin account
             </p>
@@ -93,11 +93,17 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#2C3C81] mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-[#2C3C81] mb-2"
+              >
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#B2ACCE]" size={20} />
+                <Mail
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#B2ACCE]"
+                  size={20}
+                />
                 <input
                   id="email"
                   name="email"
@@ -113,11 +119,17 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#2C3C81] mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-[#2C3C81] mb-2"
+              >
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#B2ACCE]" size={20} />
+                <Lock
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#B2ACCE]"
+                  size={20}
+                />
                 <input
                   id="password"
                   name="password"
@@ -161,15 +173,6 @@ export default function LoginPage() {
               </motion.button>
             </div>
           </form>
-
-          <div className="mt-6 text-center">
-            <Link
-              href="/signup"
-              className="text-sm font-medium text-[#C73D43] hover:text-[#2C3C81] transition-colors"
-            >
-              Don't have an account? Sign up
-            </Link>
-          </div>
         </motion.div>
       </motion.div>
     </div>

@@ -379,7 +379,9 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ user }) => {
                     className="flex items-center gap-3 px-3 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 w-full text-left"
                   >
                     <LogOut size={20} className="text-red-500" />
-                    <span className="font-medium">Sign Out</span>
+                    <Link href="/" className="font-medium">
+                      Sign Out
+                    </Link>
                   </motion.button>
                 </form>
               </div>
